@@ -2,7 +2,7 @@
 #include"/usr/include/postgresql/libpq-fe.h"
 #include<stdio.h>
 #include<stdlib.h>
-#include"Federico/postgresql"
+//#include"Federico/postgresql"
 
 
 int main()
