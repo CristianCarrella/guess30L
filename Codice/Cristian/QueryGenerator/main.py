@@ -115,7 +115,8 @@ def main():
         i = i + 1
         print(query)
     usrs.clear()
-
+    print("\nEsegui dopo aver eseguito le query precedenti")
+    
     for j in range(80):
         generateUser(2)
 

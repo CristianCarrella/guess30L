@@ -8,17 +8,39 @@
 #define MAX 80
 
 //Librerie Progetto
-#include "../__Final__/database.h"
+//#include "../__Final__/database.h"
 #include "../__Final__/strutture.h"
 
+//librerie di test
+#include "./Header/testDb.h"
 
 int main(){
     int fd1, fd2, childpid;
     struct sockaddr_in myaddress;
     char buf[MAX];
     const int PORT = 3000;
+    PGconn *conn = PQconnectdb("host=host.docker.internal port=49156 user=postgres password=postgrespw");
+	
+    if (PQstatus(conn) == CONNECTION_BAD) {
+        
+        fprintf(stderr, "Connection to database failed: %s\n",
+            PQerrorMessage(conn));
+            
+        PQfinish(conn);
+    }   
     
-    
+/*  TEST LOGIN
+
+    utente *utente1 = new_utente("angryzebra765", "racing", "em@email.it", 15);
+    utente *utente2 = new_utente("beautifulladybug845", "trick", "kai.menard@example.com", 3);
+	
+    if(loginQuery(conn, utente1->username , utente1->passw)){
+    	printf("Loggato\n");
+	}else{
+		printf("NON Loggato\n");
+	}
+*/
+
     fd1 = socket(AF_INET, SOCK_STREAM, 0);
     if(fd1 < 0){
     	printf("Errore nello stabilire la connessione\n");
