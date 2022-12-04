@@ -1,11 +1,10 @@
 #include<stdio.h>
 #include<stdlib.h>
-#include<strutture.h>
 //sudo apt-get install libpq-dev
 #include"/usr/include/postgresql/libpq-fe.h"
 
 //Inserisce una nuova stanza nel Database. Ritorna l'ID generato della stanza, -1 per errori)
-int db_insertStanza(PGconn *dbconn, utente *admin, char roomName[16], int maxGiocatori, int privato, char keyword[16])
+int db_insertStanza(PGconn *dbconn, char adminUsername[32], char roomName[16], int maxGiocatori, int privato, char keyword[16])
 {
     char queryString[512] = "INSERT INTO stanza VALUES(default, '";
     char str[16];
@@ -27,7 +26,7 @@ int db_insertStanza(PGconn *dbconn, utente *admin, char roomName[16], int maxGio
     strcat(queryString, keyword);
     strcat(queryString, "', '");
     //Admin
-    strcat(queryString, admin->username);
+    strcat(queryString, adminUsername);
     strcat(queryString, "') RETURNING idStanza;");
     //
     printf("QUERY: %s\n", queryString);
