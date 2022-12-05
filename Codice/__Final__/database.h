@@ -42,3 +42,31 @@ int db_insertStanza(PGconn *dbconn, char adminUsername[32], char roomName[16], i
     int idvalue = atoi(resultValue);
     return idvalue;
 }
+
+//Controlla che l'username e la password dati come parametri esistano nel database, ritorna true se vero altrimenti false
+bool loginQuery(PGconn *conn, char username[32], char password[16]){
+	
+	char queryString[512] = "SELECT * FROM utente WHERE username = '";
+	strcat(queryString, username);
+	strcat(queryString, "' AND passw = '");
+	strcat(queryString, password);
+	strcat(queryString, "'");
+	
+	printf("\nQUERY: %s ", queryString);
+	
+	PGresult * res = PQexec(conn, queryString);
+    
+    if (PQresultStatus(res) != PGRES_TUPLES_OK){
+		printf("NON nel db\n");
+	}
+	else{
+		printf("Presente nel db\n"); 
+		int rows = PQntuples(res);   
+		if(rows > 0){
+			return true;
+		}
+		return false;
+	}
+	PQclear(res);
+    return false;   
+}
