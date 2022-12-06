@@ -43,6 +43,27 @@ int db_insertStanza(PGconn *dbconn, char adminUsername[32], char roomName[16], i
     return idvalue;
 }
 
+//Inserisce la partecipazione di un utente ad una stanza nel db. Ritorna 1 in caso di successo, 0 in caso di fallimento
+int db_insertUtenteToStanza(PGconn *dbconn, int idStanza, char username[32])
+{
+    char queryString[512] = "UPDATE utente SET idStanza = ";
+    char *str;
+    sprintf(str, "%d", idStanza);
+    strcat(queryString, str);
+    strcat(queryString, " WHERE username = '");
+    strcat(queryString, username);
+    strcat(queryString, "';");
+    printf("QUERY: %s\n", queryString);
+    PGresult *res = PQexec(dbconn, queryString);
+    if (PQresultStatus(res) != PGRES_COMMAND_OK)
+    {
+        fprintf(stderr, "failed: %s\n", PQerrorMessage(dbconn));
+        PQclear(res);
+        return -1;
+    }
+    return 0;
+}
+
 //Controlla che l'username e la password dati come parametri esistano nel database, ritorna true se vero altrimenti false
 bool loginQuery(PGconn *conn, char username[32], char password[16]){
 	
