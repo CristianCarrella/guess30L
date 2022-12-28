@@ -27,7 +27,9 @@ int db_insertStanza(PGconn *dbconn, char adminUsername[32], char roomName[16], i
     strcat(queryString, "', '");
     //Admin
     strcat(queryString, adminUsername);
-    strcat(queryString, "') RETURNING idStanza;");
+    char *c = "'";
+    strcat(queryString, c);
+    strcat(queryString, ") RETURNING idStanza;");
     //
     printf("QUERY: %s\n", queryString);
     PGresult *res = PQexec(dbconn, queryString);
@@ -47,7 +49,7 @@ int db_insertStanza(PGconn *dbconn, char adminUsername[32], char roomName[16], i
 int db_insertUtenteToStanza(PGconn *dbconn, int idStanza, char username[32])
 {
     char queryString[512] = "UPDATE utente SET idStanza = ";
-    char *str;
+    char str[16];
     sprintf(str, "%d", idStanza);
     strcat(queryString, str);
     strcat(queryString, " WHERE username = '");
