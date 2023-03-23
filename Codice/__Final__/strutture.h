@@ -18,6 +18,7 @@ typedef struct {
 	char keyword[16];
 	utente *adminUser;
 	utente **players; //Array di utenti
+	int *socket;
 } stanza;
 
 //Allocazione di un nuovo utente
@@ -42,12 +43,26 @@ stanza *new_stanza(int id, char* nome, int maxPlayer, int privat, char *kw, uten
 	nuovo->privato = privat;
 	strcpy(nuovo->keyword, kw);
 	nuovo->adminUser = admin;
-	int i;
 	nuovo->players = (utente**)malloc(maxPlayer*(sizeof(utente*)));
-	for(i = 0; i < maxPlayer; i++)
+	for(int i = 0; i < maxPlayer; i++)
 	{
-		nuovo->players[i] = (utente*)malloc(sizeof(utente));
 		nuovo->players[i] = NULL;
 	}
+	nuovo->players[0] = admin;
 	return nuovo;
 }
+
+
+
+/*
+
+aggiungi utente
+rimuovi utente
+
+crea stanza
+chiudi stanza
+
+ricerca utenti
+ricerca stanza
+
+*/
