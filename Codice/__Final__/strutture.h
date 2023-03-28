@@ -52,7 +52,86 @@ stanza *new_stanza(int id, char* nome, int maxPlayer, int privat, char *kw, uten
 	return nuovo;
 }
 
+stanza *stanze[50];
+int stanze_lenght = 50;
 
+
+//aggiungi utente					forse solo id
+int add_user_in_room(utente *user, stanza *room){
+	for (int i = 0; i < room->numeroMaxGiocatori; i++)
+	{
+		if(room->players[i] == NULL){
+			user->idStanza = room->idStanza;
+			room->players[i] = user;
+			return 1;
+		}
+	}
+	return 0;
+}
+
+//rimuovi utente !!!!!CONDRONTA I PUNTATORI!!!!!
+int rm_user_from_room(utente *user, stanza *room ){
+	for (int i = 0; i < room->numeroMaxGiocatori; i++)
+	{
+		if(room->players[i] != NULL){
+			if(room->players[i] == user){
+				user->idStanza = -1;
+				room->players[i] = NULL;
+				return 1;
+			}
+		}
+	}
+
+	return 0;
+}
+
+int add_stanza(char *name, int max_player, int priv, char *kw, utente *admin){
+	for (int i = 0; i < stanze_lenght; i++)
+	{
+		if (stanze[i] == NULL)
+		{
+			stanze[i] = new_stanza(i, name, max_player, priv, kw, admin);
+			return 1;
+		}
+	}
+	return 0;
+}
+
+stanza *get_stanza_by_id(int id){
+	if(id < stanze_lenght){
+		if(stanze[id] != NULL){
+			return stanze[id];
+		}
+	}
+}
+
+int rm_stanza_by_id(int id){
+	if(id < stanze_lenght){
+		if(stanze[id] != NULL){
+			stanza *room = stanze[id];
+			
+			for (int i = 0; i < room->numeroMaxGiocatori; i++)
+			{
+				if(room->players[i] != NULL){
+					room->players[i]->idStanza = -1;
+				}
+			}
+
+			free(stanze[id]);
+			stanze[id] = NULL;
+		}
+	}
+}
+
+int rm_stanza(stanza *room){
+	rm_stanza_by_id(room->idStanza);
+}
+
+stanza *ricerca_stanza(stanza ** room, int idStanza){
+
+}
+
+void sort_stanza_by_id();
 
 /*
 
@@ -62,7 +141,7 @@ rimuovi utente
 crea stanza
 chiudi stanza
 
-ricerca utenti
+ricerca utenti DB?
 ricerca stanza
 
 */
