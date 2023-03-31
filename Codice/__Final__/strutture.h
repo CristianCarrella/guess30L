@@ -71,12 +71,16 @@ int add_user_in_room(utente *user, stanza *room){
 
 //rimuovi utente !!!!!CONDRONTA I PUNTATORI!!!!!
 int rm_user_from_room(utente *user, stanza *room ){
-	for (int i = 0; i < room->numeroMaxGiocatori; i++)
+	if(room->adminUser == user){
+		rm_stanza(room);
+	}
+	else for (int i = 0; i < room->numeroMaxGiocatori; i++)
 	{
 		if(room->players[i] != NULL){
 			if(room->players[i] == user){
 				user->idStanza = -1;
 				room->players[i] = NULL;
+				
 				return 1;
 			}
 		}
@@ -144,4 +148,6 @@ chiudi stanza
 ricerca utenti DB?
 ricerca stanza
 
+
+ha senso avere una struttura contenente gli utenti?
 */
