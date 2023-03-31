@@ -1,9 +1,118 @@
-#include "strutture.h"
+#include "database.h"
+#include "word.h"
+#include "main.h"
+// sudo apt install libjson-c-dev
+#include <json-c/json.h>
 
+
+void checkConnectionToDb(PGconn *conn){
+	if (PQstatus(conn) == CONNECTION_BAD) {
+        fprintf(stderr, "Connection to database failed: %s\n",
+            PQerrorMessage(conn));
+        PQfinish(conn);
+    }else{
+		printf("Successful connected to database [V]\n");
+	}
+}
+
+void signupTest(PGconn* conn){
+	printf("TEST SIGNUP USER START\n");
+	char email[64] = "provae";
+	char password[16] = "provap";
+	char username[32] = "prova";
+	if(signUp(conn, email, password, email)){
+		printf("\033[1;32m[V] Test passed - Account not registered [Already registered || Error]\033[0m\n");
+	}else{
+		printf("\033[1;32m[V] Test passed - Account registered\033[0m\n");
+	}
+	printf("TEST SIGNUP USER END\n\n");
+}
+
+void loginTestUserExist(PGconn* conn, int socket){
+	printf("TEST LOGIN USER EXIST START\n");
+	char email[32] = "provae";
+	char password[16] = "provap";
+	utente *utente = login(conn, email, password, socket);
+	if(utente != NULL){
+		printf("\033[1;32m[V] Test passed - Login Success\033[0m\n");
+	}else{
+		printf("\033[1;31m[X] Test failed - Login Failed\033[0m\n");
+	}
+	printf("TEST LOGIN USER EXIST END\n\n");
+}
+
+void loginTestUserNotExist(PGconn* conn, int socket){
+	printf("TEST LOGIN USER NOT EXIST START\n");
+	char email[32] = "prova";
+	char password[16] = "xxx";
+	utente *utente = login(conn, email, password, socket);
+	if(utente == NULL){
+		printf("\033[1;32m[V] Test passed - Login Fail\033[0m\n");
+	}
+	printf("TEST LOGIN USER NOT EXIST END\n\n");
+}
+
+head_q stanze;
+unsigned int idStanze = 0;
+unsigned int idUser = 0;
+pthread_mutex_t mutex;
+
+void *handle_client(void *socket_) {
+	// int socket = *(int*) socket_;
+	pthread_mutex_lock(&mutex);
+	char buf[25];
+	snprintf(buf, 12, "utente%d", idUser);
+	utente* utente = new_utente(buf, "pass", strcat(buf, "@email.com"), 10, idUser);
+	idUser++;
+	
+	chooseStanza(utente, 0, &stanze);
+	// printUtente(utente);
+	pthread_mutex_unlock(&mutex);
+}
+
+/*TEST MAIN*/
 int main(){
-	//utente *new_utente(char *name, char *pass, char *em, int wongames)
-	utente *utente1 = new_utente("cio", "cjie", "hfbuwi", 0);
-	stanza *stanza1 = new_stanza(1, "ciao",9, 1,"ff" , utente1);
-	stanza1->players[1] = new_utente("cio", "cjie", "hfbuwi", 0);
-	printf("%d" , stanza1->players[0]->idStanza);
+
+	/*CONNESSIONE AL DB - LOGIN - REGISTRAZIONE*/
+	// PGconn *conn = PQconnectdb("postgresql://user:admin@172.20.0.3:5432/lso");
+	// checkConnectionToDb(conn);
+	// signupTest(conn);
+	// loginTestUserExist(conn, -1);
+	// loginTestUserNotExist(conn, -1);
+
+	/*GENERAZIONE DELLE PAROLE*/
+	// unsigned int const NUMBER_OF_SUGGEST_WORD = 5;
+	// char *words[NUMBER_OF_SUGGEST_WORD][2];
+	// generateSuggestedWords(NUMBER_OF_SUGGEST_WORD, words);
+	// printSuggestedWords(NUMBER_OF_SUGGEST_WORD, words);
+
+	/*SCELTA DELLA STANZA*/
+	// unsigned int const NUM_OF_UTENTI = 10;
+	// unsigned int const NUM_OF_STANZE = 5;
+	// pthread_t thread_id[NUM_OF_UTENTI];
+	// TAILQ_INIT(&stanze);
+	// int socket = 0;
+	// //CREO UN UTENTE NELLA STANZA 0
+	// utente* utente = new_utente("utente", "pass", "ema", 10, socket);
+	// idUser++;
+	// addToListStanza(&stanze, new_stanza(idStanze++, "stanza", 6, utente));
+	// // SIMULO LA CONCORRENZA DI NUM_OF_UTENTI UTENTI CHE SCELGONO L'UNICA STANZA CON IDSTANZA = 0
+	// if (pthread_mutex_init(&mutex, NULL) != 0)
+    // {
+    //     printf("\n mutex init failed\n");
+    //     return 1;
+    // }
+
+	// for(int i = 0; i < NUM_OF_UTENTI; i++){
+	// 	if (pthread_create(&thread_id[i], NULL, &handle_client, NULL) < 0) {
+    //         perror("pthread_create failed");
+    //         exit(EXIT_FAILURE);
+    //     }
+	// }
+
+	// for(int i = 0; i < NUM_OF_UTENTI; i++){
+	// 	pthread_join(thread_id[i], NULL);
+	// }
+	// pthread_mutex_destroy(&mutex);
+	// printStanze(&stanze);
 }

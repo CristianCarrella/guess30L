@@ -1,6 +1,12 @@
+#ifndef STRUTTURE_H
+#define STRUTTURE_H
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<stdbool.h>
+#include<sys/queue.h>
+#include <pthread.h>
 
 typedef struct {
 	char username[32];
@@ -8,61 +14,44 @@ typedef struct {
 	char email[64];
 	int partiteVinte;
 	int idStanza;
+	int socket;
 } utente;
 
 typedef struct {
-	int idStanza;
+	unsigned int idStanza;
 	char nomeStanza[16];
-	int numeroMaxGiocatori;
-	int privato;
-	char keyword[16];
+	unsigned int numeroMaxGiocatori;
+	unsigned int numeroGiocatori;
 	utente *adminUser;
 	utente **players; //Array di utenti
-	int *socket;
+	unsigned int turn;
+	bool started;
 } stanza;
 
-//Allocazione di un nuovo utente
-utente *new_utente(char *name, char *pass, char *em, int wongames)
+typedef struct node_u
 {
-	utente *nuovo = (utente*)malloc(sizeof(utente));
-	strcpy(nuovo->username, name);
-	strcpy(nuovo->passw, pass);
-	strcpy(nuovo->email, em);
-	nuovo->partiteVinte = wongames;
-	nuovo->idStanza = -1;
-	return nuovo;
-}
+    utente* utente;
+    TAILQ_ENTRY(node_u) nodes;
+} node_j;
+typedef TAILQ_HEAD(head_u, node_u) head_t;
 
-//Allocazione di una nuova stanza
-stanza *new_stanza(int id, char* nome, int maxPlayer, int privat, char *kw, utente *admin)
+
+typedef struct node_s
 {
-	stanza *nuovo = (stanza*)malloc(sizeof(stanza));
-	nuovo->idStanza = id;
-	strcpy(nuovo->nomeStanza, nome);
-	nuovo->numeroMaxGiocatori = maxPlayer;
-	nuovo->privato = privat;
-	strcpy(nuovo->keyword, kw);
-	nuovo->adminUser = admin;
-	nuovo->players = (utente**)malloc(maxPlayer*(sizeof(utente*)));
-	for(int i = 0; i < maxPlayer; i++)
-	{
-		nuovo->players[i] = NULL;
-	}
-	nuovo->players[0] = admin;
-	return nuovo;
-}
+    stanza* stanza;
+    TAILQ_ENTRY(node_s) nodes;
+} node_t;
+typedef TAILQ_HEAD(head_s, node_s) head_q;
 
 
+utente *new_utente(char *name, char *pass, char *em, int wongames, int socket);
+stanza *new_stanza(unsigned int id, char* nome, unsigned int maxPlayer, utente *admin);
+void printStanze(head_q* head);
+void printUsers(head_t* head);
+bool chooseStanza(utente *utente, unsigned int idStanza, head_q* stanze);
+void addToListUtente(head_t* head, utente* utente);
+void addToListStanza(head_q* head, stanza* stanza);
+void printUtente(utente* utente);
+void addUtenteToStanza(utente* utente, stanza* stanza);
 
-/*
-
-aggiungi utente
-rimuovi utente
-
-crea stanza
-chiudi stanza
-
-ricerca utenti
-ricerca stanza
-
-*/
+#endif
