@@ -1,37 +1,68 @@
 #include "strutture.h"
 
+void visualizza_stanze();
+
 void menu(){
 	printf("inserisci nickname ");
-	char nick[30];
+	char nick[32];
+	char temp[32];
 	scanf("%s", nick);
 	printf("%s", nick);
 	utente *me = new_utente(nick, nick, nick, -1);
 
 	printf("inserisci nome stanza ");
-	char sTmp[30];
+	char sTmp[32];
 	scanf("%s", sTmp);
 	printf("inserisci n max player ");
 	int intTmp;
 	scanf("%d", &intTmp);
-	add_stanza(sTmp, intTmp,0,"Menu",me);
-while(1){
+	add_stanza(sTmp, intTmp,"Menu",me);
+while(intTmp!=50){
 	printf("cosa vuoi fare?\npremi 0 per uscire dalla stanza id\nPremi 1 per aggiungere un altro player alla stanza id\npremi 2 per creare un altra stanza\npremi 3 per rimuovere la stanza id\n");
 	scanf("%d", &intTmp);
-
 	switch (intTmp)
 	{
 	case 0:
 		printf("inserisci id");
 		scanf("%d", &intTmp);
-		rm_user_from_room(me,get_stanza_by_id(intTmp));
+		printf("%d",rm_user_from_room(me,get_stanza_by_id(intTmp)));
+		
 		break;
+
 	case 1:
-		char temp[30];
+		
 		printf("dammi l username");
-		scanf("%s", &temp);
+		scanf("%s", temp);
 		printf("dammi l id della stanza");
 		scanf("%d", &intTmp);
-		add_user_in_room(new_utente(temp,temp,temp,0), get_stanza_by_id(intTmp));
+		printf("%d",add_user_in_room(new_utente(temp,temp,temp,0), get_stanza_by_id(intTmp)));
+
+		break;
+
+	case 2:
+		printf("%s", "nome stanza e n giocatori");
+		scanf("%s" ,temp);
+		scanf("%d", &intTmp);
+		add_stanza(temp, intTmp,"gg",me);
+		break;
+	
+	case 3:
+		printf("%s","id della stanza da rimuovere");
+		scanf("%d",&intTmp);
+		rm_stanza_by_id(intTmp);
+
+		break;
+
+	case 4:
+
+		break;
+
+	case 5:
+		printf("%s",me->username);
+		visualizza_stanze();
+		break;
+	case 50:
+	intTmp = 50;
 		break;
 	default:
 		break;
@@ -42,7 +73,6 @@ while(1){
 void visualizza_stanze(){
 	for (int i = 0; i < stanze_lenght; i++)
 	{
-		ulong
 		if(stanze[i] != NULL){
 			printf("nome: %s, id: %d\n", stanze[i]->nomeStanza, stanze[i]->idStanza);
 			for (int j = 0; j < stanze[i]->numeroMaxGiocatori; j++)
@@ -57,17 +87,11 @@ void visualizza_stanze(){
 }
 
 
-
-
-
-
-
-
 //Codice per test
 int main(){
 	menu();
 
-	add_stanza("mia",6,0,"kk",new_utente("admin", "cjie", "hfbuwi", 0));
+	add_stanza("mia",6,"kk",new_utente("admin", "cjie", "hfbuwi", 0));
 	//utente *new_utente(char *name, char *pass, char *em, int wongames);
 	stanza *stanza1 = get_stanza_by_id(0);
 	utente *utente1 = new_utente("gufo", "gufo", "gufo", 0);
