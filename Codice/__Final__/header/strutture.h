@@ -28,7 +28,7 @@ typedef struct {
 } stanza;
 
 //Allocazione di un nuovo utente
-utente *new_utente(char *name, char *pass, char *em, int wongames, int imgid);
+utente *new_utente(char *name, char *pass, char *em, int wongames, int socket, int imgid);
 
 //Allocazione di una nuova stanza
 stanza *new_stanza(int id, char* nome, int maxPlayer, utente *admin);
@@ -47,6 +47,6 @@ int add_stanza(char *name, int max_player, char *kw, utente *admin);
 
 stanza *get_stanza_by_id(int id);
 
-#include "strutture.c"
+
 
 #endif

@@ -1,4 +1,4 @@
-#include"word.h"
+#include"../header/word.h"
 
 char* extractWord(char* s, char* pattern1, char* pattern2){
     char *target = NULL;

@@ -7,6 +7,12 @@
         "libpq-fe.h": "c",
         "main.h": "c",
         "socket.h": "c",
-        "avatar.h": "c"
+        "avatar.h": "c",
+        "base64.h": "c",
+        "database.h": "c",
+        "gamemanager.h": "c",
+        "dbtest.h": "c",
+        "json.h": "c",
+        "stdio.h": "c"
     }
 }

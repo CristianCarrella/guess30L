@@ -1,4 +1,4 @@
-#include"database.h"
+#include"../header/database.h"
 
 utente* login(PGconn *conn, char email[32], char password[16], int socket){
 	char queryString[512] = "SELECT * FROM utente WHERE email = '";
@@ -95,10 +95,10 @@ bool updateUserPartiteVinte(PGconn *conn, char email[64]){
 }
 
 char* getAvatarByEmail(PGconn *conn, char email[64]){
-    const char BASE_PATH_AVATAR[30] = "../avatars/avatar";
+    const char BASE_PATH_AVATAR[30] = "../../../avatars/avatar";
     utente * tmp = getUserByEmail(conn, email, -1);
     char buf[25];
-	snprintf(buf, 12, "%d.png", tmp->imgid);
+	snprintf(buf, 12, "%d.png", tmp->imgId);
     char* imagebase64 = readFile(strcat((char*)BASE_PATH_AVATAR, buf));
     free(tmp);
     return imagebase64;

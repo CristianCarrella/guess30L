@@ -6,6 +6,3 @@ CREATE TABLE utente(
 	imgId integer DEFAULT 0
 );
 
-CREATE TABLE parola(
-	word varchar(16) NOT NULL PRIMARY KEY
-);

@@ -1,6 +1,6 @@
-#include "database.h"
-#include "word.h"
-#include "main.h"
+#include "../header/database.h"
+#include "../header/word.h"
+#include "../header/main.h"
 // sudo apt install libjson-c-dev
 #include <json-c/json.h>
 
@@ -62,13 +62,13 @@ void *handle2_client(void *par_) {
                 printf("Signup fallito\n");
             }
 		}
+        //altri else if che corrisponderanno alle richieste da fare al server
 
         if (send(socket, "Message received.", 17, 0) == -1) {
             perror("send failed");
             exit(EXIT_FAILURE);
         }
         printf("\n\n");
-
         memset(buffer, 0, sizeof(buffer));
     }
     
@@ -83,7 +83,7 @@ int main(int argc, char *argv[]) {
     int addrlen = sizeof(address);
     pthread_t thread_id;
     thread_par par;
-    par.conn = PQconnectdb("postgresql://user:admin@172.20.0.3:5432/lso"); //sudo docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' container_name
+    par.conn = PQconnectdb("postgresql://user:admin@localhost:54320/postgres"); //sudo docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' container_name
 	checkConnectionToDb(par.conn);
     
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {

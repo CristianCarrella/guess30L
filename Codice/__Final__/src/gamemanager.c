@@ -1,4 +1,5 @@
-#include "gameManager.h"
+#include "../header/gameManager.h"
+#include "../header/word.h"
 
 void start_game(stanza* currentRoom) {
     //per ogni turno: la funzione manda la stringa "starting" a tutti tranne a chi deve scegliere la parola che invece riceverà "choose" seguito dalle 5 possibili parole
@@ -39,7 +40,7 @@ void start_round(stanza *room, int idPlayer) {
 
 void prepareWords(char dest[BUFFDIM], char *parole[NUMBER_OF_SUGGESTED_WORD][2]){
     int i;
-    sprintf(dest, "");
+    //sprintf(dest, "");
     for(i = 0; i < NUMBER_OF_SUGGESTED_WORD; i++){
         strcat(dest, parole[i][0]);
         strcat(dest, ": ");

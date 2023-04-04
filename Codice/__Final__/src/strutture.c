@@ -1,13 +1,13 @@
 #ifndef STRUTTURE_C
 #define STRUTTURE_C
 
-#include "header/strutture.h"
+#include "../header/strutture.h"
 
 stanza *stanze[50];
 int stanze_lenght = 50;
 
 //Allocazione di un nuovo utente
-utente *new_utente(char *name, char *pass, char *em, int wongames, int imgid)
+utente *new_utente(char *name, char *pass, char *em, int wongames, int socket, int imgid)
 {
 	utente *nuovo = (utente*)malloc(sizeof(utente));
 	strcpy(nuovo->username, name);
@@ -15,7 +15,7 @@ utente *new_utente(char *name, char *pass, char *em, int wongames, int imgid)
 	strcpy(nuovo->email, em);
 	nuovo->partiteVinte = wongames;
 	nuovo->idStanza = -1;
-	nuovo->clientSocket = 0;
+	nuovo->clientSocket = socket;
 	nuovo->imgId = imgid;
 	return nuovo;
 }
@@ -94,7 +94,6 @@ int rm_user_from_room(utente *user, stanza *room ){
 			if(room->players[i] == user){
 				user->idStanza = -1;
 				room->players[i] = NULL;
-				
 				return 1;
 			}
 		}

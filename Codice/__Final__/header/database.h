@@ -10,8 +10,6 @@
 #include"strutture.h" 
 #include"base64.h"
 
-
-
 utente* login(PGconn *conn, char email[32], char password[16], int socket);
 bool signUp(PGconn *conn, char username[32], char password[16], char email[64]);
 utente* getUserByEmail(PGconn *conn, char email[64], int socket);
