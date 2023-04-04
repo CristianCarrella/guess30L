@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "word.h": "c",
+        "strutture.h": "c",
+        "stdlib.h": "c",
+        "netdb.h": "c",
+        "libpq-fe.h": "c",
+        "main.h": "c",
+        "socket.h": "c",
+        "avatar.h": "c"
+    }
+}
