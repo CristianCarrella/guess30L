@@ -25,6 +25,7 @@ char* prepareLogin(){
     json_object_object_add(json, "email", json_object_new_string(email));
     json_object_object_add(json, "password", json_object_new_string(password));
     
+    free(json);
     // Convertire l'oggetto JSON in una stringa
     const char *jsonStr = json_object_to_json_string(json);
     return (char*)jsonStr;
@@ -40,12 +41,64 @@ char* prepareSignup(){
     scanf("%s", email);
     printf("Inserisci password: ");
     scanf("%s", password);
+
     // Creare un oggetto JSON
     struct json_object *json = json_object_new_object();
     json_object_object_add(json, "operation", json_object_new_string("signup"));
     json_object_object_add(json, "email", json_object_new_string(email));
     json_object_object_add(json, "password", json_object_new_string(password));
     json_object_object_add(json, "username", json_object_new_string(username));
+
+    // Convertire l'oggetto JSON in una stringa
+    const char *jsonStr = json_object_to_json_string(json);
+    return (char*)jsonStr;
+}
+
+char* prepareGetAvatar(){
+    char email[30];
+    printf("Inserisci l'email dell'utente del quale si vuole l'avatar: ");
+    scanf("%s", email);
+    printf("%s", email);
+
+    // Creare un oggetto JSON
+    struct json_object *json = json_object_new_object();
+    json_object_object_add(json, "operation", json_object_new_string("getAvatar"));
+    json_object_object_add(json, "email", json_object_new_string(email));
+    
+    // Convertire l'oggetto JSON in una stringa
+    const char *jsonStr = json_object_to_json_string(json);
+    return (char*)jsonStr;
+}
+
+char* prepareSetAvatar(){
+    int avatarType = 0;
+    char email[30];
+    printf("Inserisci l'email dell'utente del quale si vuole settare l'avatar: ");
+    scanf("%s", email);
+    printf("Inserisci il tipo di avatar (0, 15): ");
+    scanf("%d", &avatarType);
+
+    // Creare un oggetto JSON
+    struct json_object *json = json_object_new_object();
+    json_object_object_add(json, "operation", json_object_new_string("setAvatar"));
+    json_object_object_add(json, "email", json_object_new_string(email));
+    json_object_object_add(json, "avatarType", json_object_new_int(avatarType));
+    
+    // Convertire l'oggetto JSON in una stringa
+    const char *jsonStr = json_object_to_json_string(json);
+    return (char*)jsonStr;
+
+}
+
+char* prepareGetUserInfo(){
+    char email[30];
+    printf("Inserisci l'email dell'utente del quale si vogliono le informazioni: ");
+    scanf("%s", email);
+
+    // Creare un oggetto JSON
+    struct json_object *json = json_object_new_object();
+    json_object_object_add(json, "operation", json_object_new_string("getUserInfo"));
+    json_object_object_add(json, "email", json_object_new_string(email));
     
     // Convertire l'oggetto JSON in una stringa
     const char *jsonStr = json_object_to_json_string(json);
@@ -53,12 +106,22 @@ char* prepareSignup(){
 }
 
 char* prepareOperation(int op){
+    
     switch(op){
         case 1:
             return prepareLogin();
         break;
         case 2:
             return prepareSignup();
+        break;
+        case 3:
+            return prepareGetAvatar();
+        break;
+        case 4:
+            return prepareSetAvatar();
+        break;
+        case 5:
+            return prepareGetUserInfo();
         break;
     }
 }
@@ -88,7 +151,7 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
     while(1) {
-        printf("1. Login\n2. Signup\n");
+        printf("1. Login\n2. Signup\n3. GetAvatar\n4. SetAvatar\n5. GetUserInfo\n");
         scanf("%d", &op);
         json = prepareOperation(op);
 

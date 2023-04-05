@@ -95,7 +95,7 @@ bool updateUserPartiteVinte(PGconn *conn, char email[64]){
 }
 
 char* getAvatarByEmail(PGconn *conn, char email[64]){
-    const char BASE_PATH_AVATAR[30] = "../../../avatars/avatar";
+    const char BASE_PATH_AVATAR[30] = "../../avatars/avatar";
     utente * tmp = getUserByEmail(conn, email, -1);
     char buf[25];
 	snprintf(buf, 12, "%d.png", tmp->imgId);

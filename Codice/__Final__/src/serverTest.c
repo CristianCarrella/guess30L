@@ -40,6 +40,7 @@ void *handle2_client(void *par_) {
 
         struct json_object *js = json_tokener_parse(buffer);
         const char *operation = json_object_get_string(json_object_object_get(js, "operation"));
+        struct json_object *json = json_object_new_object();
 
 		if(strcmp(operation, "login") == 0){
 			char* email = (char*) json_object_get_string(json_object_object_get(js, "email"));
@@ -62,7 +63,50 @@ void *handle2_client(void *par_) {
                 printf("Signup fallito\n");
             }
 		}
-        //altri else if che corrisponderanno alle richieste da fare al server
+        else if(strcmp(operation, "getAvatar") == 0){
+            char* email = (char*) json_object_get_string(json_object_object_get(js, "email"));
+            char* base64image_encoded = getAvatarByEmail(conn, email);
+
+            json_object_object_add(json, "email", json_object_new_string(email));
+            json_object_object_add(json, "avatarBase64", json_object_new_string(base64image_encoded)); //al client arriverà con dei backslash in più
+        }
+        else if(strcmp(operation, "setAvatar") == 0){
+            char* email = (char*) json_object_get_string(json_object_object_get(js, "email"));
+            int avatarType = (int) json_object_get_int(json_object_object_get(js, "avatarType"));
+            bool result = setAvatarOfUser(conn, email, avatarType);
+
+            json_object_object_add(json, "email", json_object_new_string(email));
+            json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
+        }
+        else if(strcmp(operation, "getUserInfo") == 0){
+            char* email = (char*) json_object_get_string(json_object_object_get(js, "email"));
+            utente* u = getUserByEmail(conn, email, -1);
+
+            json_object_object_add(json, "email", json_object_new_string(email));
+            json_object_object_add(json, "idStanza", json_object_new_int(u->idStanza));
+            json_object_object_add(json, "imgId", json_object_new_int(u->imgId));
+            json_object_object_add(json, "partiteVinte", json_object_new_int(u->partiteVinte));
+            json_object_object_add(json, "username", json_object_new_string(u->username));
+            free(u);
+
+        }
+        else if(strcmp(operation, "joinRoom") == 0){
+            
+        }
+        else if(strcmp(operation, "searchRoom") == 0){
+            
+        }
+        else if(strcmp(operation, "createRoom") == 0){
+            
+        }
+        else if(strcmp(operation, "startGame") == 0){
+            
+        }
+
+        const char *jsonStr = json_object_to_json_string(json);
+        printf("JSON response: %s", jsonStr);
+        //dovrà inviare al client jsonStr
+        //free(json);
 
         if (send(socket, "Message received.", 17, 0) == -1) {
             perror("send failed");
