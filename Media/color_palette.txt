@@ -1,0 +1,18 @@
+PALETTE 1
+#292828
+#fbe3e3
+#a29292
+#8b7c7c
+#847474
+#c4acac
+#7c7474
+#ccb4b4
+#ccbcbc
+
+
+PALETTE 2
+#FFE2E2
+#FD536A
+#FEEBD6
+#00ADB0
+#584141

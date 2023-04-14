@@ -7,7 +7,7 @@ stanza *stanze[50];
 int stanze_lenght = 50;
 
 //Allocazione di un nuovo utente
-utente *new_utente(char *name, char *pass, char *em, int wongames, int socket, int imgid)
+utente *new_utente(char *name, char *pass, char *em, int wongames, int socket, int imgid, pthread_t tid)
 {
 	utente *nuovo = (utente*)malloc(sizeof(utente));
 	strcpy(nuovo->username, name);
@@ -17,6 +17,7 @@ utente *new_utente(char *name, char *pass, char *em, int wongames, int socket, i
 	nuovo->idStanza = -1;
 	nuovo->clientSocket = socket;
 	nuovo->imgId = imgid;
+	nuovo->tid = tid;
 	return nuovo;
 }
 

@@ -1,6 +1,6 @@
 #include"../header/database.h"
 
-utente* login(PGconn *conn, char email[32], char password[16], int socket){
+utente* login(PGconn *conn, char email[32], char password[16], int socket, pthread_t tid){
 	char queryString[512] = "SELECT * FROM utente WHERE email = '";
 	strcat(queryString, email);
 	strcat(queryString, "' AND passw = '");
@@ -20,7 +20,7 @@ utente* login(PGconn *conn, char email[32], char password[16], int socket){
             int retrived_partiteVinte = atoi(PQgetvalue(res, 0, 3));
             int imgId = atoi(PQgetvalue(res, 0, 4));
             PQclear(res);
-            return new_utente(retrived_username, retrived_password, retrived_email, retrived_partiteVinte, socket, imgId);
+            return new_utente(retrived_username, retrived_password, retrived_email, retrived_partiteVinte, socket, imgId, tid);
         }   
 	}
     printf("Errore nella select\n");
@@ -49,7 +49,7 @@ bool signUp(PGconn *conn, char username[32], char password[16], char email[64]){
     return true;
 }
 
-utente* getUserByEmail(PGconn *conn, char email[64], int socket){
+utente* getUserByEmail(PGconn *conn, char email[64], int socket, pthread_t tid){
 	char queryString[512] = "SELECT * FROM utente WHERE email = '";
 	strcat(queryString, email);
 	strcat(queryString, "'");
@@ -67,7 +67,7 @@ utente* getUserByEmail(PGconn *conn, char email[64], int socket){
             int retrived_partiteVinte = atoi(PQgetvalue(res, 0, 3));
             int imgId = atoi(PQgetvalue(res, 0, 4));
             PQclear(res);
-            return new_utente(retrived_username, retrived_password, retrived_email, retrived_partiteVinte, socket, imgId);
+            return new_utente(retrived_username, retrived_password, retrived_email, retrived_partiteVinte, socket, imgId, tid);
         }   
 	}
     printf("Errore nella select\n");
@@ -94,9 +94,9 @@ bool updateUserPartiteVinte(PGconn *conn, char email[64]){
     return false;   
 }
 
-char* getAvatarByEmail(PGconn *conn, char email[64]){
+char* getAvatarByEmail(PGconn *conn, char email[64], pthread_t tid){
     const char BASE_PATH_AVATAR[30] = "../../avatars/avatar";
-    utente * tmp = getUserByEmail(conn, email, -1);
+    utente * tmp = getUserByEmail(conn, email, -1, tid);
     char buf[25];
 	snprintf(buf, 12, "%d.png", tmp->imgId);
     char* imagebase64 = readFile(strcat((char*)BASE_PATH_AVATAR, buf));

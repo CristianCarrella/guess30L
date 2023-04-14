@@ -5,6 +5,7 @@
 #include<stdlib.h>
 #include<string.h>
 #include<stdbool.h>
+#include<pthread.h>
 
 typedef struct {
 	char username[32];
@@ -14,6 +15,7 @@ typedef struct {
 	int idStanza;
 	int clientSocket;
 	int imgId;
+	pthread_t tid;
 } utente;
 
 typedef struct {
@@ -28,7 +30,7 @@ typedef struct {
 } stanza;
 
 //Allocazione di un nuovo utente
-utente *new_utente(char *name, char *pass, char *em, int wongames, int socket, int imgid);
+utente *new_utente(char *name, char *pass, char *em, int wongames, int socket, int imgid, pthread_t tid);
 
 //Allocazione di una nuova stanza
 stanza *new_stanza(int id, char* nome, int maxPlayer, utente *admin);
