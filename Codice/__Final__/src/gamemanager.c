@@ -1,35 +1,64 @@
-#include "../header/gameManager.h"
+#include "gameManager.h"
 
-void start_game(stanza* currentRoom) {
-    //per ogni turno: la funzione manda la stringa "starting" a tutti tranne a chi deve scegliere la parola che invece riceverà "choose" seguito dalle 5 possibili parole
-    // il server aspetterà di ricevere la parola scelta e la manderà a tutti gli altri
-    // iniziando dal primo giocatore il server [attiva un timer e] si mette in attesa di sapere se la parola è stata indovinata
-    // se la parola è stata indovinata lo comunica a tutti gli altri giocatori e si riparte, altrimenti si passa al prossimo giocatore
-    // una volta che tutti hanno provato il sever comunica che è finito il giro, manda una lettera casuale come indizio e il giro riparte
-    currentRoom->started = true;
-    int i;
-    
-    //for(i = 0; i < currentRoom->numeroMaxGiocatori; i++){
-        //if(currentRoom->players[i] == NULL)
-            //continue;
-        start_round(currentRoom, i);
-    //}
+char* start_room(stanza* currentRoom, int targetScore) {
+    int i = 0;
+    char response[BUFFDIM];
+    int *score = (int*)calloc(currentRoom->numeroMaxGiocatori, sizeof(int));
+    int winnerIndex = -1;
+    char *winnerName;
+
+    do
+    {
+        if(currentRoom->players[i] == NULL){
+            i = ++i % currentRoom->numeroMaxGiocatori;
+            continue;
+        }  
+        sendBroadcast(currentRoom, i, "WAIT");
+        send(currentRoom->players[i]->clientSocket, "CHOOSE", 7, 0);
+        recv(currentRoom->players[i]->clientSocket, response, BUFFDIM, 0);
+        printf("HOST RESPONSE %s\n", response);
+        printf("Host id: %d\n", i);
+        winnerIndex = start_round(currentRoom, i);
+        if(winnerIndex != -1)
+            score[winnerIndex]++;
+        else
+            return NULL;  
+        i = ++i % currentRoom->numeroMaxGiocatori;
+    } while(score[winnerIndex] < targetScore);
+    sendBroadcast(currentRoom, -1, "END");
+
+    winnerName = currentRoom->players[winnerIndex]->username;
+    return winnerName;
 }
 
-void start_round(stanza *room, int idHostPlayer) {
+int start_round(stanza *room, int idHostPlayer) {
     int i = 0, j = 0;
     char choosenWord[32];
-    char buffer[BUFFDIM];
+    char buffer[BUFFDIM] = {0};
     char *parole[NUMBER_OF_SUGGESTED_WORD][2];
-    int choosenWordIndex;
+    int choosenWordIndex = 0, winnerIndex = -1;
+
+    //Set connection time-out per le socket
+    for(i = 0; i < room->numeroMaxGiocatori; i++) {
+        if(room->players[i] == NULL || i == idHostPlayer)
+            continue;
+        struct timeval tv;
+        tv.tv_sec = 5;
+        tv.tv_usec = 0;
+        setsockopt(room->players[i]->clientSocket, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
+    }
 
     //Selezione parola da parte dell'host del round
     generateSuggestedWords(NUMBER_OF_SUGGESTED_WORD, parole);
     prepareWords(buffer, parole);
-    printf("%s", buffer);
+    //printf("%s", buffer);
     send(room->players[idHostPlayer]->clientSocket, buffer, strlen(buffer), 0); //Invio delle parole suggerite
     memset(buffer, 0, sizeof(buffer));
     recv(room->players[idHostPlayer]->clientSocket, buffer, 32, 0 ); //In attesa di ricevere la parola scelta
+    if(buffer[0] == 0) {
+        printf("Connection error\n");
+        return -1;
+    }
     while(strcmp(parole[choosenWordIndex][0], buffer) != 0){ //Estrazione dell'indice della parola scelta dalla matrice
         choosenWordIndex++;
     }
@@ -44,14 +73,19 @@ void start_round(stanza *room, int idHostPlayer) {
 
     int guessed = 0;
     int *hints = (int*)calloc(strlen(choosenWord), sizeof(int));
+    //Svolgimento del round
     do {
         for(i = 0; i < room->numeroMaxGiocatori; i++) {
             if(room->players[i] == NULL || i == idHostPlayer)
                 continue;
             else {
-                send(room->players[i]->clientSocket, "YOUR TURN", 10, 0);
+                send(room->players[i]->clientSocket, "YOUR_TURN", 10, 0);
                 memset(buffer, 0, sizeof(buffer));
-                recv(room->players[i]->clientSocket, buffer, BUFFDIM, 0);
+                recv(room->players[i]->clientSocket, buffer, BUFFDIM, 0); //In attesa del tentativo
+                if(buffer[0] == 0) {
+                    printf("Connection error\n");
+                    return -1;
+                }
                 printf("%s\n", buffer);
                 sendBroadcast(room, i, buffer);
                 struct json_object *jsObj = json_tokener_parse(buffer);
@@ -61,12 +95,26 @@ void start_round(stanza *room, int idHostPlayer) {
                 }
             }
         }
-        sendBroadcast(room, -1, "NEW HINT");
-        struct json_object *js_hint = generateHint(choosenWord, hints);
-        sendBroadcast(room, -1, json_object_to_json_string(js_hint));
-    } while(!guessed);
+        if(!guessed) {
+            struct json_object *js_hint = generateHint(choosenWord, hints);
+            if(js_hint != NULL) {
+                sendBroadcast(room, -1, "NEW_HINT");
+                sendBroadcast(room, -1, json_object_to_json_string(js_hint));
+                free(js_hint);
+            }
+            else {
+                sendBroadcast(room, -1, "HINT_END");
+                winnerIndex = idHostPlayer;
+            }
+        }
+        else {
+            winnerIndex = i;
+        }
+    } while(winnerIndex == -1);
     free(hints);
-    //Deallocare json object
+    free(jsObj);
+    printf("%s ha indovinato la parola\n", room->players[winnerIndex]->username);
+    return winnerIndex;
 }
 
 void sendBroadcast(stanza* room, int idHost, char* msg) {
@@ -93,6 +141,9 @@ struct json_object *generateHint(char *parola, int *hints) {
     int len = strlen(parola), position;
     do {
         position = rand()%len;
+        if(hintsIsFull(hints, len)){
+            return NULL;
+        }
     } while(hints[position] == 1);
     hints[position] = 1;
     c[0] = parola[position];
@@ -103,13 +154,29 @@ struct json_object *generateHint(char *parola, int *hints) {
     return jsObj;
 }
 
+int hintsIsFull(int *hints, int len) {
+    int i = 0;
+    for(i = 0; i < len; i++) {
+        if(hints[i] == 0)
+            return 0;
+    }
+    return 1;
+}
+
 void prepareWords(char dest[BUFFDIM], char *parole[NUMBER_OF_SUGGESTED_WORD][2]){
     int i;
-    sprintf(dest, "");
+    char key[64] = {0};
+    char num[64] = {0};
+    struct json_object *js_obj = json_object_new_object();
     for(i = 0; i < NUMBER_OF_SUGGESTED_WORD; i++){
-        strcat(dest, parole[i][0]);
-        strcat(dest, ": ");
-        strcat(dest, parole[i][1]);
-        strcat(dest, "\n");
+        strcpy(key, "word");
+        sprintf(num, "%d", i);
+        strcat(key, num);
+        struct json_object *js_array = json_object_new_array();
+        json_object_array_add(js_array, json_object_new_string(parole[i][0]));
+        json_object_array_add(js_array, json_object_new_string(parole[i][1]));
+        json_object_object_add(js_obj, key, js_array);
     }
+    strcpy(dest, json_object_to_json_string(js_obj));
+    free(js_obj);
 }
