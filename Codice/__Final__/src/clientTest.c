@@ -25,7 +25,7 @@ char* prepareLogin(){
     json_object_object_add(json, "email", json_object_new_string(email));
     json_object_object_add(json, "password", json_object_new_string(password));
     
-    free(json);
+    //free(json);
     // Convertire l'oggetto JSON in una stringa
     const char *jsonStr = json_object_to_json_string(json);
     return (char*)jsonStr;
@@ -105,25 +105,89 @@ char* prepareGetUserInfo(){
     return (char*)jsonStr;
 }
 
+char* prepareJoinRoom(){
+    int idStanza;
+    printf("Inserisci l id della stanza: ");
+    scanf("%d", &idStanza);
+
+    struct json_object *json = json_object_new_object();
+    json_object_object_add(json, "operation", json_object_new_string("joinRoom"));
+    json_object_object_add(json, "idStanza", json_object_new_int(idStanza));
+
+    // Convertire l'oggetto JSON in una stringa
+    const char *jsonStr = json_object_to_json_string(json);
+    return (char*)jsonStr;
+
+}
+
+char* prepareCreateRoom(){
+    char nomeStanza[16];
+    printf("Inserisci il nome della stanza da creare: ");
+    scanf("%s", nomeStanza);
+
+    int numeroMaxGiocatori;
+    printf("Inserisci il numero massimo di giocatori: ");
+    scanf("%d", &numeroMaxGiocatori);
+
+    // Creare un oggetto JSON
+    struct json_object *json = json_object_new_object();
+    json_object_object_add(json, "operation", json_object_new_string("createRoom"));
+    json_object_object_add(json, "nomeStanza", json_object_new_string(nomeStanza));
+    json_object_object_add(json, "numeroMaxGiocatori", json_object_new_int(numeroMaxGiocatori));
+
+    // Convertire l'oggetto JSON in una stringa
+    const char *jsonStr = json_object_to_json_string(json);
+    return (char*)jsonStr;
+}
+
+char* prepareQuitRoom(){
+    struct json_object *json = json_object_new_object();
+    json_object_object_add(json, "operation", json_object_new_string("quitRoom"));
+
+    // Convertire l'oggetto JSON in una stringa
+    const char *jsonStr = json_object_to_json_string(json);
+    return (char*)jsonStr;
+}
+
 char* prepareOperation(int op){
-    
-    switch(op){
-        case 1:
-            return prepareLogin();
-        break;
-        case 2:
-            return prepareSignup();
-        break;
-        case 3:
-            return prepareGetAvatar();
-        break;
-        case 4:
-            return prepareSetAvatar();
-        break;
-        case 5:
-            return prepareGetUserInfo();
-        break;
-    }
+    //while(true){
+        switch(op){
+            case 1:
+                return prepareLogin();
+            break;
+            case 2:
+                return prepareSignup();
+            break;
+            case 3:
+                return prepareGetAvatar();
+            break;
+            case 4:
+                return prepareSetAvatar();
+            break;
+            case 5:
+                return prepareGetUserInfo();
+            break;
+            case 6:
+                return prepareJoinRoom();
+            break;
+            case 7:
+                //searchRoom
+            break;
+            case 8:
+                return prepareCreateRoom();
+            break;
+            case 9:
+                return prepareQuitRoom();
+            break;
+            case 10:
+                //startGame
+            break;
+            default:
+
+            break;
+        }
+    //}
+
 }
 
 int main(int argc, char *argv[]) {
