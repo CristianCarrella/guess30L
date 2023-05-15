@@ -22,8 +22,7 @@ struct clientData
 {
     int socket;
     stanza *room;
-}
-clientData;
+};
 
 char *start_room(stanza*, int);
 // Ritorna l'index del vincitore all'interno dell'array players

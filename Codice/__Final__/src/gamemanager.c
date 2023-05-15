@@ -1,3 +1,6 @@
+#ifndef GAMEMANAGER_C
+#define GAMEMANAGER_C
+
 #include "../header/gameManager.h"
 
 char* start_room(stanza* currentRoom, int targetScore) {
@@ -43,7 +46,7 @@ int start_round(stanza *room, int idHostPlayer) {
         if(room->players[i] == NULL || i == idHostPlayer)
             continue;
         struct timeval tv;
-        tv.tv_sec = 5;
+        tv.tv_sec = 15;
         tv.tv_usec = 0;
         setsockopt(room->players[i]->clientSocket, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
     }
@@ -180,3 +183,5 @@ void prepareWords(char dest[BUFFDIM], char *parole[NUMBER_OF_SUGGESTED_WORD][2])
     strcpy(dest, json_object_to_json_string(js_obj));
     free(js_obj);
 }
+
+#endif

@@ -4,6 +4,9 @@
         "strutture.h": "c",
         "stdio.h": "c",
         "*.tcc": "c",
-        "word.h": "c"
+        "word.h": "c",
+        "stdlib.h": "c",
+        "json.h": "c",
+        "gamemanager.h": "c"
     }
 }
