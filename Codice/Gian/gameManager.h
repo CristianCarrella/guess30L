@@ -14,7 +14,7 @@
 #include <sys/time.h>
 
 #define PORT 9876
-#define MAX_CLIENTS 1
+#define MAX_CLIENTS
 #define BUFFDIM 1024
 #define NUMBER_OF_SUGGESTED_WORD 4
 

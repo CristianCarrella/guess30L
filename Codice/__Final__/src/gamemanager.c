@@ -1,4 +1,4 @@
-#include "gameManager.h"
+#include "../header/gameManager.h"
 
 char* start_room(stanza* currentRoom, int targetScore) {
     int i = 0;
