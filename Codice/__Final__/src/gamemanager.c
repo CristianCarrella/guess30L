@@ -1,4 +1,4 @@
-#include "gameManager.h"
+#include "../header/gameManager.h"
 
 void start_game(stanza* currentRoom) {
     //per ogni turno: la funzione manda la stringa "starting" a tutti tranne a chi deve scegliere la parola che invece riceverà "choose" seguito dalle 5 possibili parole

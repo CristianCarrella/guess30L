@@ -15,13 +15,15 @@ void checkConnectionToDb(PGconn *conn){
 }
 
 
+
 typedef struct thread_par {
     int new_socket;
     PGconn* conn;
 } thread_par;
 
-
 void *handle2_client(void *par_) {
+    utente* utenteLoggato = NULL;
+    stanza* stanzaAttuale = NULL;
     thread_par par = *(thread_par*)par_;
     int socket = par.new_socket;
     PGconn * conn = par.conn;
@@ -30,6 +32,7 @@ void *handle2_client(void *par_) {
     printf("New client connected.\n");
     
     while (1) {
+        visualizza_stanze();
 		
         if ((read(socket, buffer, 2048)) == 0) {
             printf("Client disconnected.\n");
@@ -46,8 +49,8 @@ void *handle2_client(void *par_) {
 			char* email = (char*) json_object_get_string(json_object_object_get(js, "email"));
 			char* password = (char*) json_object_get_string(json_object_object_get(js, "password"));
 
-			utente* utente = login(conn, email, password, socket);
-            if(utente != NULL){
+			utenteLoggato = login(conn, email, password, socket, pthread_self());
+            if(utenteLoggato != NULL){
                 printf("Login avvenuto con successo!\n");
             }else{
                 printf("Login fallito\n");
@@ -65,7 +68,7 @@ void *handle2_client(void *par_) {
 		}
         else if(strcmp(operation, "getAvatar") == 0){
             char* email = (char*) json_object_get_string(json_object_object_get(js, "email"));
-            char* base64image_encoded = getAvatarByEmail(conn, email);
+            char* base64image_encoded = getAvatarByEmail(conn, email,pthread_self());
 
             json_object_object_add(json, "email", json_object_new_string(email));
             json_object_object_add(json, "avatarBase64", json_object_new_string(base64image_encoded)); //al client arriverà con dei backslash in più
@@ -80,7 +83,7 @@ void *handle2_client(void *par_) {
         }
         else if(strcmp(operation, "getUserInfo") == 0){
             char* email = (char*) json_object_get_string(json_object_object_get(js, "email"));
-            utente* u = getUserByEmail(conn, email, -1);
+            utente* u = getUserByEmail(conn, email, -1, pthread_self());
 
             json_object_object_add(json, "email", json_object_new_string(email));
             json_object_object_add(json, "idStanza", json_object_new_int(u->idStanza));
@@ -91,13 +94,30 @@ void *handle2_client(void *par_) {
 
         }
         else if(strcmp(operation, "joinRoom") == 0){
-            
+            int idStanza = (int) json_object_get_int(json_object_object_get(js, "idStanza"));
+            stanza* stanz = get_stanza_by_id(idStanza);
+            bool result = add_user_in_room(utenteLoggato, stanz);
+            if(result){
+                stanzaAttuale = stanz;
+            }
+            json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
         }
         else if(strcmp(operation, "searchRoom") == 0){
             
         }
         else if(strcmp(operation, "createRoom") == 0){
+            char* nomeStanza = (char*) json_object_get_string(json_object_object_get(js, "nomeStanza"));
+            int numeroMaxGiocatori = (int) json_object_get_int(json_object_object_get(js, "numeroMaxGiocatori"));
             
+            int id = add_stanza(nomeStanza, numeroMaxGiocatori, utenteLoggato);
+            stanzaAttuale = get_stanza_by_id(id);
+            printf("stanza creata: %s\n",stanzaAttuale->nomeStanza);
+            json_object_object_add(json, "id", json_object_new_int(id));
+        }
+        else if(strcmp(operation, "quitRoom") == 0){
+            bool result = rm_user_from_room(utenteLoggato,stanzaAttuale);
+            stanzaAttuale = NULL;
+            json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
         }
         else if(strcmp(operation, "startGame") == 0){
             
@@ -122,6 +142,7 @@ void *handle2_client(void *par_) {
 }
 
 int main(int argc, char *argv[]) {
+    pthread_mutex_init(&mutex, NULL);
     int server_fd;
     struct sockaddr_in address;
     int addrlen = sizeof(address);
@@ -133,6 +154,13 @@ int main(int argc, char *argv[]) {
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
         perror("socket failed");
         exit(EXIT_FAILURE);
+    }
+
+    //CODICE FEDE consente al socket di riutilizzare l'indirizzo e la porta
+    int reuse = 1;
+    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) < 0) {
+        perror("Errore durante l'impostazione dell'opzione SO_REUSEADDR");
+        exit(1);
     }
     
     address.sin_family = AF_INET;
@@ -162,6 +190,6 @@ int main(int argc, char *argv[]) {
             exit(EXIT_FAILURE);
         }
     }
-    
+    pthread_mutex_destroy(&mutex);
     return 0;
 }
