@@ -2,7 +2,6 @@
 #define GAMEMANAGER_C
 
 #include "../header/gameManager.h"
-#include <signal.h>
 
 char* start_room(stanza* currentRoom, int targetScore) {
     int i = 0;
@@ -55,7 +54,6 @@ int start_round(stanza *room, int idHostPlayer) {
         if(room->players[i] == NULL || i == idHostPlayer)
             continue;
         struct timeval tv;
-        tv.tv_sec = 15;
         tv.tv_usec = 0;
         setsockopt(room->players[i]->clientSocket, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
     }
@@ -140,7 +138,6 @@ void sendBroadcast(stanza* room, int idHost, char* msg) {
             send(room->players[i]->clientSocket, msg, strlen(msg), 0);
             //printf("waiting response from sock %d ... ", room->players[i]->clientSocket);
             recv(room->players[i]->clientSocket, response, BUFFDIM, 0);
-            printf("%s\n", response);
         }   
     }
 }
