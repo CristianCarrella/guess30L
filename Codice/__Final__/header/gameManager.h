@@ -13,8 +13,11 @@
 #include "strutture.h"
 #include "word.h"
 #include <sys/time.h>
+#include <signal.h>
+#include "strutture.h"
+#include "word.h"
 
-#define BUFFDIM 1024
+#define BUFFDIM 4096
 #define NUMBER_OF_SUGGESTED_WORD 4
 
 struct clientData
@@ -28,7 +31,9 @@ char *start_room(stanza*, int);
 // Ritorna l'index del vincitore all'interno dell'array players
 int start_round(stanza*, int);
 struct json_object *generateHint(char *parola, int *hints);
+void sendBroadcast(stanza*, int, char[]);
 void prepareWords(char dest[BUFFDIM], char *parole[NUMBER_OF_SUGGESTED_WORD][2]);
 int hintsIsFull(int *hints, int len);
+void thread_unlock();
 
 #endif
