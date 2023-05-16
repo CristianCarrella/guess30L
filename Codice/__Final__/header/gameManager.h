@@ -10,8 +10,6 @@
 #include <stdbool.h>
 #include <json-c/json.h>
 #include <time.h>
-#include "strutture.h"
-#include "word.h"
 #include <sys/time.h>
 #include <signal.h>
 #include "strutture.h"
@@ -19,12 +17,6 @@
 
 #define BUFFDIM 4096
 #define NUMBER_OF_SUGGESTED_WORD 4
-
-struct clientData
-{
-    int socket;
-    stanza *room;
-};
 
 //Funzione da chiamare per cominciare la partita all'interno di una stanza. Ritorna l'username del vincitore della partita
 char *start_room(stanza*, int);
