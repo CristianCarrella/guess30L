@@ -72,7 +72,7 @@ int start_round(stanza *room, int idHostPlayer) {
     struct json_object *jsObj = json_object_new_object();
     json_object_object_add(jsObj, "word", json_object_new_string(choosenWord));
     json_object_object_add(jsObj, "definition", json_object_new_string(parole[choosenWordIndex][1]));
-    sendBroadcast(room, idHostPlayer, json_object_to_json_string(jsObj));
+    sendBroadcast(room, idHostPlayer, (char*) json_object_to_json_string(jsObj));
 
     int guessed = 0;
     int *hints = (int*)calloc(strlen(choosenWord), sizeof(int));
@@ -102,7 +102,7 @@ int start_round(stanza *room, int idHostPlayer) {
             struct json_object *js_hint = generateHint(choosenWord, hints);
             if(js_hint != NULL) {
                 sendBroadcast(room, -1, "NEW_HINT");
-                sendBroadcast(room, -1, json_object_to_json_string(js_hint));
+                sendBroadcast(room, -1, (char*) json_object_to_json_string(js_hint));
                 free(js_hint);
             }
             else {

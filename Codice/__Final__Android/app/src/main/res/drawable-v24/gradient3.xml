@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list  xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item>
+        <bitmap android:src="@drawable/button2"/>
+    </item>
+    <item android:width="132dp"
+        android:height="30dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="19dp"/>
+            <gradient android:startColor="#08E1E4" android:endColor="#04D7DB"/>
+        </shape>
+    </item>
+</layer-list>

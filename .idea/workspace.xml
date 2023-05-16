@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="1f6b9f04-e096-4dc5-939b-0c7d912819a1" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/.idea/.name" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/build.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/proguard-rules.pro" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/androidTest/java/com/example/guess30l/ExampleInstrumentedTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/java/com/example/guess30l/ChangeAvatarActivity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/java/com/example/guess30l/CreateRoomActivity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/java/com/example/guess30l/HomeActivity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/java/com/example/guess30l/LoginActivity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/java/com/example/guess30l/MainActivity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/java/com/example/guess30l/ServerRequester.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/java/com/example/guess30l/SignUpActivity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/java/com/example/guess30l/models/LoggedUser.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable-v24/gradient.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable-v24/gradient2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable-v24/gradient3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/angle.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/avatar0.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/avatar1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/avatar10.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/avatar11.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/avatar12.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/avatar13.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/avatar14.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/avatar15.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/avatar2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/avatar3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/avatar4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/avatar5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/avatar6.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/avatar7.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/avatar8.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/avatar9.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/backbutton.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/btn.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/btn2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/btn3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/button.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/button2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/create_button.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/create_button_hover.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/editavatar_button.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/editavatar_hover.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/hoverlayhomebtn1.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/hoverlayhomebtn2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/hoverlayhomebtn3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/ic_launcher_background.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/join.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/join_button.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/join_button_hover.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/logo2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/roundedbutton.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/drawable/smile.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/layout/activity_change_avatar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/layout/activity_create_room.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/layout/activity_home.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/layout/activity_login.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/layout/activity_main.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/layout/activity_sign_up.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/mipmap-hdpi/ic_launcher.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/mipmap-hdpi/ic_launcher_round.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/mipmap-mdpi/ic_launcher.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/mipmap-xhdpi/ic_launcher.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/mipmap-xxhdpi/ic_launcher.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/values-night/themes.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/values/colors.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/values/themes.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/xml/backup_rules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/xml/data_extraction_rules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/build.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/gradle.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/gradlew" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/gradlew.bat" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/settings.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Media/angle.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Media/backButton.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Media/button.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Media/button2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Media/create_button.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Media/create_button_hover.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Media/edit.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Media/editavatar_button.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Media/editavatar_hover.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Media/join_button.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Media/join_button_hover.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Media/logo2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Codice/__Final__/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Codice/__Final__/.vscode/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Codice/__Final__/client" beforeDir="false" afterPath="$PROJECT_DIR$/Codice/__Final__/client" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Codice/__Final__/header/gameManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/Codice/__Final__/header/gameManager.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Codice/__Final__/server" beforeDir="false" afterPath="$PROJECT_DIR$/Codice/__Final__/server" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Codice/__Final__/src/gamemanager.c" beforeDir="false" afterPath="$PROJECT_DIR$/Codice/__Final__/src/gamemanager.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Codice/__Final__/src/serverTest.c" beforeDir="false" afterPath="$PROJECT_DIR$/Codice/__Final__/src/serverTest.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Media/smile.png" beforeDir="false" afterPath="$PROJECT_DIR$/Media/smile.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/avatars/avatar0.png" beforeDir="false" afterPath="$PROJECT_DIR$/avatars/avatar0.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/avatars/avatar14.png" beforeDir="false" afterPath="$PROJECT_DIR$/avatars/avatar14.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/avatars/avatar15.png" beforeDir="false" afterPath="$PROJECT_DIR$/avatars/avatar15.png" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="2PsivrcQkuVQHwkrsgngRT1Erus" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
+    <property name="cidr.known.project.marker" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="1f6b9f04-e096-4dc5-939b-0c7d912819a1" name="Changes" comment="" />
+      <created>1684252424057</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1684252424057</updated>
+    </task>
+    <servers />
+  </component>
+</project>

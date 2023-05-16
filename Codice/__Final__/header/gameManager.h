@@ -11,6 +11,7 @@
 #include <json-c/json.h>
 #include <time.h>
 #include "strutture.h"
+#include "word.h"
 #include <sys/time.h>
 
 #define PORT 9876

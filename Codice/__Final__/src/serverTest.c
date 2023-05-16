@@ -48,12 +48,15 @@ void *handle2_client(void *par_) {
 		if(strcmp(operation, "login") == 0){
 			char* email = (char*) json_object_get_string(json_object_object_get(js, "email"));
 			char* password = (char*) json_object_get_string(json_object_object_get(js, "password"));
-
-			utenteLoggato = login(conn, email, password, socket, pthread_self());
-            if(utenteLoggato != NULL){
+			utente* utente = login(conn, email, password, socket, pthread_self());
+            if(utente != NULL){
                 printf("Login avvenuto con successo!\n");
+                json_object_object_add(json, "logged", json_object_new_string("true"));
+
             }else{
                 printf("Login fallito\n");
+                json_object_object_add(json, "logged", json_object_new_string("false"));
+                send(socket, "{\"logged\":\"false\"}\n", 19, 0);
             }
 		}
 		else if(strcmp(operation, "signup") == 0){
@@ -62,13 +65,15 @@ void *handle2_client(void *par_) {
 			char* username = (char*) json_object_get_string(json_object_object_get(js, "username"));
             if(signUp(conn, username, password, email)){
                 printf("Signup avvenuto con successo!\n");
+                json_object_object_add(json, "signed", json_object_new_string("true"));
             }else{
                 printf("Signup fallito\n");
+                json_object_object_add(json, "signed", json_object_new_string("false"));
             }
 		}
         else if(strcmp(operation, "getAvatar") == 0){
             char* email = (char*) json_object_get_string(json_object_object_get(js, "email"));
-            char* base64image_encoded = getAvatarByEmail(conn, email,pthread_self());
+            char* base64image_encoded = getAvatarByEmail(conn, email,  pthread_self());
 
             json_object_object_add(json, "email", json_object_new_string(email));
             json_object_object_add(json, "avatarBase64", json_object_new_string(base64image_encoded)); //al client arriverà con dei backslash in più
@@ -83,7 +88,7 @@ void *handle2_client(void *par_) {
         }
         else if(strcmp(operation, "getUserInfo") == 0){
             char* email = (char*) json_object_get_string(json_object_object_get(js, "email"));
-            utente* u = getUserByEmail(conn, email, -1, pthread_self());
+            utente* u = getUserByEmail(conn, email, socket, pthread_self());
 
             json_object_object_add(json, "email", json_object_new_string(email));
             json_object_object_add(json, "idStanza", json_object_new_int(u->idStanza));
@@ -124,14 +129,16 @@ void *handle2_client(void *par_) {
         }
 
         const char *jsonStr = json_object_to_json_string(json);
-        printf("JSON response: %s", jsonStr);
-        //dovrà inviare al client jsonStr
-        //free(json);
-
-        if (send(socket, "Message received.", 17, 0) == -1) {
+    
+        
+        printf("%ld JSON response: %s", strlen(jsonStr), jsonStr);
+        if(send(socket, jsonStr, strlen(jsonStr), 0) == -1) {
             perror("send failed");
             exit(EXIT_FAILURE);
         }
+        send(socket, "\n", 1, 0);
+        //free(json);
+
         printf("\n\n");
         memset(buffer, 0, sizeof(buffer));
     }
@@ -165,6 +172,7 @@ int main(int argc, char *argv[]) {
     
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
+    //address.sin_addr.s_addr = inet_addr("127.0.0.1");
     address.sin_port = htons(PORT);
     
     if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {

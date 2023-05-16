@@ -13,6 +13,8 @@
         "gamemanager.h": "c",
         "dbtest.h": "c",
         "json.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "functional": "c",
+        "typeinfo": "c"
     }
 }
