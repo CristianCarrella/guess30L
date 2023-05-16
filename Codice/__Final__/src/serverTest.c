@@ -108,7 +108,21 @@ void *handle2_client(void *par_) {
             json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
         }
         else if(strcmp(operation, "searchRoom") == 0){
-            
+            // stanza * stanzeTmp[50];
+            struct json_object * jsonArray = json_object_new_array();
+            for(int i = 0; i < stanze_lenght; i++){
+		        if(stanze[i] != NULL){
+                    struct json_object * jsonStanza = json_object_new_object();
+                    
+                    json_object_object_add(jsonStanza, "id", json_object_new_int(i));
+                    json_object_object_add(jsonStanza, "nomeStanza", json_object_new_string(stanze[i]->nomeStanza));
+
+                    json_object_array_add(jsonArray, jsonStanza);
+		        }
+	        }
+            json = jsonArray;
+            //strcpy(json, json_object_to_json_string(jsonArray));
+            //printf("%s",json);
         }
         else if(strcmp(operation, "createRoom") == 0){
             char* nomeStanza = (char*) json_object_get_string(json_object_object_get(js, "nomeStanza"));
