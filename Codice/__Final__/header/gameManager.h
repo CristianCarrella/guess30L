@@ -25,6 +25,7 @@ struct clientData
     stanza *room;
 };
 
+//Funzione da chiamare per cominciare la partita all'interno di una stanza. Ritorna l'username del vincitore della partita
 char *start_room(stanza*, int);
 // Ritorna l'index del vincitore all'interno dell'array players
 int start_round(stanza*, int);

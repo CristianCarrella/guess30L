@@ -2,6 +2,7 @@
 #define GAMEMANAGER_C
 
 #include "../header/gameManager.h"
+#include <signal.h>
 
 char* start_room(stanza* currentRoom, int targetScore) {
     int i = 0;
@@ -20,7 +21,7 @@ char* start_room(stanza* currentRoom, int targetScore) {
         send(currentRoom->players[i]->clientSocket, "CHOOSE", 7, 0);
         recv(currentRoom->players[i]->clientSocket, response, BUFFDIM, 0);
         printf("HOST RESPONSE %s\n", response);
-        printf("Host id: %d\n", i);
+        //printf("Host id: %d\n", i);
         winnerIndex = start_round(currentRoom, i);
         if(winnerIndex != -1)
             score[winnerIndex]++;
@@ -30,6 +31,14 @@ char* start_room(stanza* currentRoom, int targetScore) {
     } while(score[winnerIndex] < targetScore);
     sendBroadcast(currentRoom, -1, "END");
 
+    //Sblocca thread degli altri utenti
+    for(i = 0; i < currentRoom->numeroMaxGiocatori; i++) {
+        if(currentRoom->players[i] == NULL)
+            continue;
+        pthread_kill(currentRoom->players[i]->tid, SIGUSR1);
+    }
+
+    //Restituice il vincitore
     winnerName = currentRoom->players[winnerIndex]->username;
     return winnerName;
 }
@@ -66,7 +75,7 @@ int start_round(stanza *room, int idHostPlayer) {
         choosenWordIndex++;
     }
     strcpy(choosenWord, parole[choosenWordIndex][0]);
-    printf("La parola scelta è %s\n - %s\n", choosenWord, parole[choosenWordIndex][1]);
+    printf("%s ha scelto %s\n - %s\n", room->players[idHostPlayer]->username, choosenWord, parole[choosenWordIndex][1]);
 
     //Invio della parola scelta + definizione ai giocatori
     struct json_object *jsObj = json_object_new_object();
@@ -74,9 +83,9 @@ int start_round(stanza *room, int idHostPlayer) {
     json_object_object_add(jsObj, "definition", json_object_new_string(parole[choosenWordIndex][1]));
     sendBroadcast(room, idHostPlayer, (char*) json_object_to_json_string(jsObj));
 
+    //Svolgimento del round
     int guessed = 0;
     int *hints = (int*)calloc(strlen(choosenWord), sizeof(int));
-    //Svolgimento del round
     do {
         for(i = 0; i < room->numeroMaxGiocatori; i++) {
             if(room->players[i] == NULL || i == idHostPlayer)
@@ -129,7 +138,7 @@ void sendBroadcast(stanza* room, int idHost, char* msg) {
             continue;
         else {
             send(room->players[i]->clientSocket, msg, strlen(msg), 0);
-            printf("waiting response from sock %d ... ", room->players[i]->clientSocket);
+            //printf("waiting response from sock %d ... ", room->players[i]->clientSocket);
             recv(room->players[i]->clientSocket, response, BUFFDIM, 0);
             printf("%s\n", response);
         }   
