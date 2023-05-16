@@ -46,7 +46,7 @@ stanza *new_stanza(int id, char* nome, int maxPlayer, utente *admin)
 
 
 int rm_stanza_by_id(int id){
-	int success = 0;
+	int success = false;
 	if(id < stanze_lenght){
 		printf("arrivo al semaforo rm_stanza");
 		//acquisizione
@@ -54,7 +54,7 @@ int rm_stanza_by_id(int id){
 		// pthread_cond_wait(&condition, &mutex);
 
 		if(stanze[id] != NULL){
-			success = 1;
+			success = true;
 			stanza *room = stanze[id];
 			
 			for (int i = 0; i < room->numeroMaxGiocatori; i++)
@@ -75,25 +75,36 @@ int rm_stanza_by_id(int id){
 }
 
 int rm_stanza(stanza *room){
-	rm_stanza_by_id(room->idStanza);
+	return rm_stanza_by_id(room->idStanza);
 }
 
 //aggiungi utente					forse solo id
 int add_user_in_room(utente *user, stanza *room){
-	int success = 0;
+	if(user == NULL || room == NULL){
+		return false;
+	}
+	int success = false;
 	//acquisizione
 	pthread_mutex_lock(&mutex);
-
+	int tmp = -1;
 	for (int i = 0; i < room->numeroMaxGiocatori; i++)
 	{
-		if(room->players[i] == NULL){
-			user->idStanza = room->idStanza;
-			room->players[i] = user;
-			success = 1;
-			break;
+		if(room->players[i] != NULL ){
+			if(room->players[i] == user){
+				success = true;
+				break;
+			}
+		}else if(tmp == -1){
+			tmp = i;
 		}
 	}
-	room = NULL;
+	if(tmp != -1){
+		user->idStanza = room->idStanza;
+		room->players[tmp] = user;
+		success = true;
+	}
+
+	// room = NULL;
 	pthread_mutex_unlock(&mutex);
 
 	return success;
@@ -106,6 +117,7 @@ int add_user_in_room_by_id(utente *user, int id){
 
 //rimuovi utente !!!!!CONDRONTA I PUNTATORI!!!!!
 int rm_user_from_room(utente *user, stanza *room ){
+	int success;
 	if(user == NULL || room == NULL){
 		printf("user o stanza NULL ");
 		if(user == NULL){
@@ -114,12 +126,12 @@ int rm_user_from_room(utente *user, stanza *room ){
 		if(room == NULL){
 			printf("stanza NULL ");
 		}
-		return 0;
+		success = false;
 	}
 	// strcmp non worka strcmp(room->adminUser->username,user->username)
 	printf("\nl admin è %s mentre l utente trovato è %s\n", room->adminUser->username, user->username);
 	if(room->adminUser == user){
-		rm_stanza(room);
+		success = rm_stanza(room);
 	}
 	else for (int i = 0; i < room->numeroMaxGiocatori; i++)
 	{
@@ -127,12 +139,12 @@ int rm_user_from_room(utente *user, stanza *room ){
 			if(room->players[i] == user){
 				user->idStanza = -1;
 				room->players[i] = NULL;
-				return 1;
+				success = true;
+				break;
 			}
 		}
 	}
-
-	return 0;
+	return false;
 }
 
 int add_stanza(char *name, int max_player, utente *admin){
@@ -162,6 +174,7 @@ stanza *get_stanza_by_id(int id){
 
 stanza* get_stanze(){
 	//FUNZIONE PER OTTENERE TUTTE LE STANZE DISPONIBILI
+	return stanze;
 }
 
 void visualizza_stanze(){
@@ -184,6 +197,4 @@ void visualizza_stanze(){
 
 #endif
 
-// stanza *ricerca_stanza(stanza ** room, int idStanza);
-
-// void sort_stanza_by_id();
+//se un utente entra in una nuova stanza deve uscire dalla stanza attuale

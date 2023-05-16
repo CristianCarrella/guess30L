@@ -149,6 +149,15 @@ char* prepareQuitRoom(){
     return (char*)jsonStr;
 }
 
+char* prepareSearchRoom(){
+    struct json_object *json = json_object_new_object();
+    json_object_object_add(json, "operation", json_object_new_string("searchRoom"));
+
+    // Convertire l'oggetto JSON in una stringa
+    const char *jsonStr = json_object_to_json_string(json);
+    return (char*)jsonStr;
+}
+
 char* prepareOperation(int op){
     //while(true){
         switch(op){
@@ -171,7 +180,7 @@ char* prepareOperation(int op){
                 return prepareJoinRoom();
             break;
             case 7:
-                //searchRoom
+                return prepareSearchRoom();
             break;
             case 8:
                 return prepareCreateRoom();
@@ -216,6 +225,7 @@ int main(int argc, char *argv[]) {
     }
     while(1) {
         printf("1. Login\n2. Signup\n3. GetAvatar\n4. SetAvatar\n5. GetUserInfo\n");
+        printf("6. prepareJoinRoom\n7. prepareSearchRoom\n8. prepareCreateRoom\n9. prepareQuitRoom \n10. startGame");
         scanf("%d", &op);
         json = prepareOperation(op);
 
