@@ -8,7 +8,7 @@ char* start_room(stanza* currentRoom, int targetScore) {
     char response[BUFFDIM];
     int *score = (int*)calloc(currentRoom->numeroMaxGiocatori, sizeof(int));
     int winnerIndex = -1;
-    char *winnerName;
+    char *winnerEmail;
 
     do
     {
@@ -38,8 +38,8 @@ char* start_room(stanza* currentRoom, int targetScore) {
     }
 
     //Restituice il vincitore
-    winnerName = currentRoom->players[winnerIndex]->username;
-    return winnerName;
+    winnerEmail = currentRoom->players[winnerIndex]->email;
+    return winnerEmail;
 }
 
 int start_round(stanza *room, int idHostPlayer) {

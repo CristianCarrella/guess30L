@@ -56,7 +56,7 @@ void *handle2_client(void *par_) {
             }else{
                 printf("Login fallito\n");
                 json_object_object_add(json, "logged", json_object_new_string("false"));
-                send(socket, "{\"logged\":\"false\"}\n", 19, 0);
+                //send(socket, "{\"logged\":\"false\"}\n", 19, 0);
             }
 		}
 		else if(strcmp(operation, "signup") == 0){
