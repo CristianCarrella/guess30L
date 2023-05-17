@@ -48,15 +48,13 @@ void *handle2_client(void *par_) {
 		if(strcmp(operation, "login") == 0){
 			char* email = (char*) json_object_get_string(json_object_object_get(js, "email"));
 			char* password = (char*) json_object_get_string(json_object_object_get(js, "password"));
-			utente* utente = login(conn, email, password, socket, pthread_self());
-            if(utente != NULL){
+			utenteLoggato = login(conn, email, password, socket, pthread_self());
+            if(utenteLoggato != NULL){
                 printf("Login avvenuto con successo!\n");
                 json_object_object_add(json, "logged", json_object_new_string("true"));
-
             }else{
                 printf("Login fallito\n");
                 json_object_object_add(json, "logged", json_object_new_string("false"));
-                //send(socket, "{\"logged\":\"false\"}\n", 19, 0);
             }
 		}
 		else if(strcmp(operation, "signup") == 0){
@@ -100,12 +98,27 @@ void *handle2_client(void *par_) {
         }
         else if(strcmp(operation, "joinRoom") == 0){
             int idStanza = (int) json_object_get_int(json_object_object_get(js, "idStanza"));
-            stanza* stanz = get_stanza_by_id(idStanza);
-            bool result = add_user_in_room(utenteLoggato, stanz);
+            stanza* stanza = get_stanza_by_id(idStanza);
+            bool result = add_user_in_room(utenteLoggato, stanza);
             if(result){
-                stanzaAttuale = stanz;
+                stanzaAttuale = stanza;
             }
+            
+            struct json_object *jsonArray = json_object_new_array();
+            printf("%d", stanza->numeroMaxGiocatori);
+            for(int i = 0; i < stanza->numeroMaxGiocatori; i++){
+                if(stanza->players[i] != NULL){
+                    struct json_object * jsonUser = json_object_new_object();
+                    printf("%s provaaa\n", stanza->players[i]->username);
+                    json_object_object_add(jsonUser, "username", json_object_new_string(stanza->players[i]->username));
+                    json_object_array_add(jsonArray, jsonUser);
+                }else{
+                    printf("prova2");
+                }  
+            }
+            
             json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
+            json = jsonArray;
         }
         else if(strcmp(operation, "searchRoom") == 0){
             // stanza * stanzeTmp[50];

@@ -31,7 +31,6 @@ stanza *new_stanza(int id, char* nome, int maxPlayer, utente *admin)
 	nuovo->idStanza = id;
 	strcpy(nuovo->nomeStanza, nome);
 	nuovo->numeroMaxGiocatori = maxPlayer;
-	nuovo->numeroGiocatori = 1;
 	nuovo->turn = 0;
 	nuovo->started = false;
 	nuovo->adminUser = admin;
@@ -174,6 +173,7 @@ stanza *get_stanza_by_id(int id){
 
 stanza* get_stanze(){
 	//FUNZIONE PER OTTENERE TUTTE LE STANZE DISPONIBILI
+	stanza *stanze;
 	return stanze;
 }
 

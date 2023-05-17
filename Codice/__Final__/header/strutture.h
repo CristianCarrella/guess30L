@@ -22,7 +22,6 @@ typedef struct {
 	int idStanza;
 	char nomeStanza[16];
 	int numeroMaxGiocatori;
-	int numeroGiocatori;
 	int turn;
 	bool started;
 	utente *adminUser;
