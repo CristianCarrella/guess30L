@@ -69,6 +69,16 @@ public class ServerRequester {
         }
     }
 
+    public int CreateRoomRequest(String nomeStanza, String numeroRound, String numeroMaxGiocatori) {
+        Future<String> future = executor.submit(new CreateRoomCallable(nomeStanza, numeroRound, numeroMaxGiocatori, socket));
+        try {
+            JSONObject jsonString = new JSONObject(future.get());
+            return jsonString.getInt("id");
+        } catch (ExecutionException | InterruptedException | JSONException e) {
+            return -1;
+        }
+    }
+
     public String getUserAvatar(String email) {
         Future<String> future = executor.submit(new AvatarCallable(email, socket));
         try {
@@ -262,6 +272,39 @@ public class ServerRequester {
             }
         }
 
+    }
+
+    private static class CreateRoomCallable implements Callable<String> {
+        String nomeStanza;
+        String numeroMaxGiocatori;
+        Socket socket;
+
+        public CreateRoomCallable(String nomeStanza,String numeroRound, String numeroMaxGiocatori, Socket socket) {
+            this.nomeStanza = nomeStanza;
+            this.numeroMaxGiocatori = numeroMaxGiocatori;
+            this.socket = socket;
+        }
+
+        @Override
+        public String call() throws Exception {
+            try{
+                JSONObject obj = new JSONObject();
+
+                obj.put("operation", "createRoom");
+                obj.put("nomeStanza", nomeStanza);
+                obj.put("numeroMaxGiocatori", numeroMaxGiocatori);
+
+                PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
+                printWriter.print(obj);
+                printWriter.flush();
+
+                return readSocket(socket);
+
+            }catch(IOException | JSONException e){
+                e.printStackTrace();
+                return null;
+            }
+        }
     }
 
     public static String readSocket(Socket socket) throws IOException {

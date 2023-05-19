@@ -10,26 +10,44 @@
         android:id="@+id/numeroMaxPartecipantiField"
         android:layout_width="260dp"
         android:layout_height="40dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/roundedbutton"
         android:ems="10"
         android:inputType="number"
         android:paddingLeft="5dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/numeroMaxPersoneText"
-        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck"
+        tools:text="5" />
+
+    <EditText
+        android:id="@+id/nomeStamzaField"
+        android:layout_width="260dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/roundedbutton"
+        android:ems="10"
+        android:inputType="text"
+        android:paddingLeft="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nomeStanza"
+        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck"
+        tools:text="gg" />
 
     <TextView
         android:id="@+id/numeroRoundText"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="20dp"
         android:text="Numero di round"
         android:textColor="#000000"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.274"
+        app:layout_constraintHorizontal_bias="0.27"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/numeroMaxPartecipantiField" />
 
@@ -46,24 +64,38 @@
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/numeroRoundText"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+        app:layout_constraintVertical_bias="0.026"
+        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck"
+        tools:text="5" />
+
+    <TextView
+        android:id="@+id/nomeStanza"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginTop="20dp"
+        android:text="Nome della stanza"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.29"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/creaStanzaTitle" />
 
     <TextView
         android:id="@+id/numeroMaxPersoneText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="20dp"
         android:text="Numero massimo partecipanti"
         android:textColor="#000000"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.449"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/creaStanzaTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/nomeStamzaField" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/createRoomButton2"
+        android:id="@+id/createRoomButton"
         android:layout_width="134dp"
         android:layout_height="38dp"
         android:background="@drawable/btn3"
@@ -72,10 +104,10 @@
         android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.725"
+        app:layout_constraintHorizontal_bias="0.859"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.626"
+        app:layout_constraintVertical_bias="0.724"
         tools:ignore="TouchTargetSizeCheck" />
 
     <TextView
