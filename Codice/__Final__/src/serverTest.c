@@ -29,17 +29,17 @@ void *handle2_client(void *par_) {
     int socket = par.new_socket;
     PGconn * conn = par.conn;
     char buffer[2048] = {0};
-    
+
     printf("New client connected.\n");
-    
+
     while (1) {
         visualizza_stanze();
-		
+
         if ((read(socket, buffer, 2048)) == 0) {
             printf("Client disconnected.\n");
             break;
         }
-        
+
         printf("Received message from client: %s\n", buffer);
 
         struct json_object *js = json_tokener_parse(buffer);
@@ -118,7 +118,7 @@ void *handle2_client(void *par_) {
             for(int i = 0; i < stanze_lenght; i++){
 		        if(stanze[i] != NULL){
                     struct json_object * jsonStanza = json_object_new_object();
-                    
+
                     json_object_object_add(jsonStanza, "id", json_object_new_int(i));
                     json_object_object_add(jsonStanza, "nomeStanza", json_object_new_string(stanze[i]->nomeStanza));
 
@@ -132,7 +132,7 @@ void *handle2_client(void *par_) {
         else if(strcmp(operation, "createRoom") == 0){
             char* nomeStanza = (char*) json_object_get_string(json_object_object_get(js, "nomeStanza"));
             int numeroMaxGiocatori = (int) json_object_get_int(json_object_object_get(js, "numeroMaxGiocatori"));
-            
+
             int id = add_stanza(nomeStanza, numeroMaxGiocatori, utenteLoggato);
             stanzaAttuale = get_stanza_by_id(id);
             printf("stanza creata: %s\n",stanzaAttuale->nomeStanza);
@@ -156,8 +156,8 @@ void *handle2_client(void *par_) {
         }
 
         const char *jsonStr = json_object_to_json_string(json);
-    
-        
+
+
         printf("%ld JSON response: %s", strlen(jsonStr), jsonStr);
         if(send(socket, jsonStr, strlen(jsonStr), 0) == -1) {
             perror("send failed");
@@ -169,9 +169,9 @@ void *handle2_client(void *par_) {
         printf("\n\n");
         memset(buffer, 0, sizeof(buffer));
     }
-    
+
     close(socket);
-    
+
     return NULL;
 }
 
@@ -184,7 +184,7 @@ int main(int argc, char *argv[]) {
     thread_par par;
     par.conn = PQconnectdb("postgresql://user:admin@localhost:54320/postgres"); //sudo docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' container_name
 	checkConnectionToDb(par.conn);
-    
+
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
         perror("socket failed");
         exit(EXIT_FAILURE);
@@ -196,22 +196,22 @@ int main(int argc, char *argv[]) {
         perror("Errore durante l'impostazione dell'opzione SO_REUSEADDR");
         exit(1);
     }
-    
+
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
     //address.sin_addr.s_addr = inet_addr("127.0.0.1");
     address.sin_port = htons(PORT);
-    
+
     if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
-    
+
     if (listen(server_fd, MAX_CLIENTS) < 0) {
         perror("listen failed");
         exit(EXIT_FAILURE);
     }
-    
+
     printf("Server started listening on port %d...\n", PORT);
     
     while (1) {
@@ -219,7 +219,7 @@ int main(int argc, char *argv[]) {
             perror("accept failed");
             exit(EXIT_FAILURE);
         }
-        
+
         if (pthread_create(&thread_id, NULL, handle2_client, (void *)&par) < 0) {
             perror("pthread_create failed");
             exit(EXIT_FAILURE);
