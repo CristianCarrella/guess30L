@@ -11,6 +11,9 @@
 
 #define PORT 5000
 
+void play(int);
+char *prepareStartGame();
+
 char* prepareLogin(){
     char email[30];
     char password[30];
@@ -158,7 +161,7 @@ char* prepareSearchRoom(){
     return (char*)jsonStr;
 }
 
-char* prepareOperation(int op){
+char* prepareOperation(int op, int socket){
     //while(true){
         switch(op){
             case 1:
@@ -189,7 +192,7 @@ char* prepareOperation(int op){
                 return prepareQuitRoom();
             break;
             case 10:
-                //startGame
+                return prepareStartGame();
             break;
             default:
 
@@ -197,6 +200,105 @@ char* prepareOperation(int op){
         }
     //}
 
+}
+
+void play(int sock) {
+
+    struct json_object *jsObj;
+    char *jsonStr;
+    char buffer[1024] = {0};
+    char name[1024] = "utenteTest";
+
+    ////////////////////////////////////////////////////
+
+    while(1) {
+        while(1) {
+            memset(buffer, 0, sizeof(buffer));
+            read(sock, buffer, 1024);
+            printf("%s\n", buffer);
+            if(strcmp(buffer, "CHOOSE") == 0) {
+                send(sock, "OK", 3, 0);
+                memset(buffer, 0, sizeof(buffer));
+                recv(sock, buffer, 1024, 0);
+                printf("%s\n", buffer);
+                printf("Scegli la parola: ");
+                memset(buffer, 0, sizeof(buffer));
+                scanf("%s", buffer);
+                send(sock, buffer, strlen(buffer), 0);
+                break;
+            }
+            else if(strcmp(buffer, "WAIT") == 0){
+                send(sock, "OK", 3, 0);
+                printf("Waiting for the word...\n");
+                memset(buffer, 0, sizeof(buffer));
+                recv(sock, buffer, 1024, 0);
+                send(sock, "OK", 1024, 0);
+                printf("%s\n", buffer);
+                break;
+            }
+            else if(strcmp(buffer, "END") == 0) {
+                send(sock, "OK", 3, 0);
+                return;
+            }  
+        }
+        printf("%s\n", "In attesa del tuo turno");
+        while(1) {
+            int guessed = 0;
+            memset(buffer, 0, sizeof(buffer));
+            recv(sock, buffer, 1024, 0);
+            printf("%s\n", buffer);
+            if(strcmp(buffer, "YOUR_TURN") == 0) {
+                jsObj = json_object_new_object();
+                printf("Tentativo: ");
+                scanf("%s", buffer);
+                if(strcmp(buffer, "parola0") == 0) {
+                    guessed = 1;
+                    json_object_object_add(jsObj, "guessed", json_object_new_boolean(guessed));
+                    json_object_object_add(jsObj, "playerName", json_object_new_string(name));
+                }
+                else {
+                    json_object_object_add(jsObj, "guessed", json_object_new_boolean(0));
+                    json_object_object_add(jsObj, "playerName", json_object_new_string(name));
+                    json_object_object_add(jsObj, "word", json_object_new_string(buffer));
+                }
+                strcpy(buffer, json_object_to_json_string(jsObj));
+                printf("%s\n", buffer);
+                send(sock, buffer, strlen(buffer), 0);
+            }
+            else if(strcmp(buffer, "NEW_HINT") == 0) {
+                send(sock, "OK", 1024, 0);
+                memset(buffer, 0, sizeof(buffer));
+                recv(sock, buffer, 1024, 0);
+                printf("%s", buffer);
+                send(sock, "OK", 1024, 0);
+            }
+            else if(strcmp(buffer, "HINT_END") == 0) {
+                send(sock, "OK", 1024, 0);
+                guessed = 1;
+            }
+            else {
+                jsObj = json_tokener_parse(buffer);
+                guessed = json_object_get_boolean(json_object_object_get(jsObj, "guessed"));
+                send(sock, "OK", 1024, 0);
+            }
+            if(guessed)
+                break;
+        }
+        //memset(buffer, 0, sizeof(buffer));
+    }
+    //char response[1024];
+    //read(sock, response, 1024);
+    //printf("%s\n", response);
+    return;
+}
+
+char *prepareStartGame() {
+    struct json_object *json = json_object_new_object();
+    json_object_object_add(json, "operation", json_object_new_string("startGame"));
+
+    // Convertire l'oggetto JSON in una stringa
+    const char *jsonStr = json_object_to_json_string(json);
+    return (char*)jsonStr;
 }
 
 int main(int argc, char *argv[]) {
@@ -227,13 +329,20 @@ int main(int argc, char *argv[]) {
         printf("1. Login\n2. Signup\n3. GetAvatar\n4. SetAvatar\n5. GetUserInfo\n");
         printf("6. prepareJoinRoom\n7. prepareSearchRoom\n8. prepareCreateRoom\n9. prepareQuitRoom \n10. startGame");
         scanf("%d", &op);
-        json = prepareOperation(op);
+        json = prepareOperation(op, sock);
 
         if (send(sock, json, strlen(json), 0) == -1) {
             perror("send failed");
             exit(EXIT_FAILURE);
         }
         printf("Message sent to server: %s\n", json);
+        if(op == 6) {
+            printf("Waiting for admin starting the game\n");
+            play(sock);
+        }
+        else if(op == 10) {
+            play(sock);
+        }
         
         if ((valread = read(sock, buffer, 1024)) == 0) {
             printf("Server disconnected.\n");

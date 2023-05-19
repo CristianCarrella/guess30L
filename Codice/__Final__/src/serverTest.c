@@ -1,6 +1,7 @@
 #include "../header/database.h"
 #include "../header/word.h"
 #include "../header/main.h"
+#include "../header/gameManager.h"
 // sudo apt install libjson-c-dev
 #include <json-c/json.h>
 
@@ -52,6 +53,7 @@ void *handle2_client(void *par_) {
             if(utenteLoggato != NULL){
                 printf("Login avvenuto con successo!\n");
                 json_object_object_add(json, "logged", json_object_new_string("true"));
+
             }else{
                 printf("Login fallito\n");
                 json_object_object_add(json, "logged", json_object_new_string("false"));
@@ -98,27 +100,17 @@ void *handle2_client(void *par_) {
         }
         else if(strcmp(operation, "joinRoom") == 0){
             int idStanza = (int) json_object_get_int(json_object_object_get(js, "idStanza"));
-            stanza* stanza = get_stanza_by_id(idStanza);
-            bool result = add_user_in_room(utenteLoggato, stanza);
+            stanza* stanz = get_stanza_by_id(idStanza);
+            bool result = add_user_in_room(utenteLoggato, stanz);
             if(result){
-                stanzaAttuale = stanza;
+                stanzaAttuale = stanz;
             }
-            
-            struct json_object *jsonArray = json_object_new_array();
-            printf("%d", stanza->numeroMaxGiocatori);
-            for(int i = 0; i < stanza->numeroMaxGiocatori; i++){
-                if(stanza->players[i] != NULL){
-                    struct json_object * jsonUser = json_object_new_object();
-                    printf("%s provaaa\n", stanza->players[i]->username);
-                    json_object_object_add(jsonUser, "username", json_object_new_string(stanza->players[i]->username));
-                    json_object_array_add(jsonArray, jsonUser);
-                }else{
-                    printf("prova2");
-                }  
-            }
-            
             json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
-            json = jsonArray;
+            ////////////////////////////////
+            signal(SIGUSR1, thread_unlock);
+            pause();
+            printf("tread unlocked for %s\n", utenteLoggato->username);
+            ////////////////////////////////
         }
         else if(strcmp(operation, "searchRoom") == 0){
             // stanza * stanzeTmp[50];
@@ -152,7 +144,15 @@ void *handle2_client(void *par_) {
             json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
         }
         else if(strcmp(operation, "startGame") == 0){
-            
+            char winnerEmail[64];
+            char* email;
+            int result = 1;
+            email = start_room(get_stanza_by_id(utenteLoggato->idStanza), 2);
+            rm_stanza_by_id(utenteLoggato->idStanza);
+            strcpy(winnerEmail, email);
+            updateUserPartiteVinte(conn, winnerEmail);
+
+            json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
         }
 
         const char *jsonStr = json_object_to_json_string(json);
