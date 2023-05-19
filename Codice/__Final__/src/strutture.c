@@ -156,6 +156,7 @@ int add_stanza(char *name, int max_player, utente *admin){
 		{
 			stanze[i] = new_stanza(i, name, max_player, admin);
 			id = i;
+			admin->idStanza = id;
 			break;
 		}
 	}

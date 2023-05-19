@@ -73,6 +73,7 @@ char* searchDefInDictionary(char* word){
 }
 
 void generateSuggestedWords(int numberOfWord, char* suggestedWord[numberOfWord][2]){
+    
     for(int i = 0; i < numberOfWord; i++){
         char* word = NULL;
         char* description = NULL;
@@ -83,6 +84,21 @@ void generateSuggestedWords(int numberOfWord, char* suggestedWord[numberOfWord][
         suggestedWord[i][0] = word;
         suggestedWord[i][1] = description;
     }
+    /*
+    int i;
+    for(i = 0; i < numberOfWord; i++){
+        suggestedWord[i][0] = (char*)malloc(32);
+        suggestedWord[i][1] = (char*)malloc(1024);
+        char n[4];
+        sprintf(n, "%d", i);
+        char p[32] = "parola";
+        strcat(p, n);
+        char d[1024] = "definizione";
+        strcat(d, n);
+        strcpy(suggestedWord[i][0], p);
+        strcpy(suggestedWord[i][1], d);
+    }
+    */
 }
 
 void printSuggestedWords(int numberOfWord, char* suggestedWord[numberOfWord][2]){

@@ -2,6 +2,8 @@
 #define GAMEMANAGER_C
 
 #include "../header/gameManager.h"
+#define ADMIN_ERROR -1
+#define USER_ERROR -2
 
 char* start_room(stanza* currentRoom, int targetScore) {
     int i = 0;
@@ -10,6 +12,24 @@ char* start_room(stanza* currentRoom, int targetScore) {
     int winnerIndex = -1;
     char *winnerEmail;
 
+    printf("Game started in %s\nGiocatori:\n", currentRoom->nomeStanza);
+    for(i=0; i<currentRoom->numeroMaxGiocatori; i++) {
+        if(currentRoom->players[i] != NULL)
+            printf("%s\n", currentRoom->players[i]->username);
+    }
+    currentRoom->started = true;
+
+    //Set connection time-out per le socket
+    for(i = 0; i < currentRoom->numeroMaxGiocatori; i++) {
+        if(currentRoom->players[i] == NULL)
+            continue;
+        struct timeval tv;
+        tv.tv_sec = 45;
+        tv.tv_usec = 0;
+        setsockopt(currentRoom->players[i]->clientSocket, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
+    }
+
+    i=0;
     do
     {
         if(currentRoom->players[i] == NULL){
@@ -22,7 +42,7 @@ char* start_room(stanza* currentRoom, int targetScore) {
         printf("HOST RESPONSE %s\n", response);
         //printf("Host id: %d\n", i);
         winnerIndex = start_round(currentRoom, i);
-        if(winnerIndex != -1)
+        if(winnerIndex != ADMIN_ERROR)
             score[winnerIndex]++;
         else
             return NULL;  
@@ -37,6 +57,16 @@ char* start_room(stanza* currentRoom, int targetScore) {
         pthread_kill(currentRoom->players[i]->tid, SIGUSR1);
     }
 
+    //Ripristina connection time-out per le socket
+    for(i = 0; i < currentRoom->numeroMaxGiocatori; i++) {
+        if(currentRoom->players[i] == NULL)
+            continue;
+        struct timeval tv;
+        tv.tv_sec = 3600;
+        tv.tv_usec = 0;
+        setsockopt(currentRoom->players[i]->clientSocket, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
+    }
+
     //Restituice il vincitore
     winnerEmail = currentRoom->players[winnerIndex]->email;
     return winnerEmail;
@@ -49,17 +79,8 @@ int start_round(stanza *room, int idHostPlayer) {
     char *parole[NUMBER_OF_SUGGESTED_WORD][2];
     int choosenWordIndex = 0, winnerIndex = -1;
 
-    //Set connection time-out per le socket
-    for(i = 0; i < room->numeroMaxGiocatori; i++) {
-        if(room->players[i] == NULL || i == idHostPlayer)
-            continue;
-        struct timeval tv;
-        tv.tv_sec = 45;
-        tv.tv_usec = 0;
-        setsockopt(room->players[i]->clientSocket, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
-    }
-
     //Selezione parola da parte dell'host del round
+    printf("Reupero le parole per la stanza %s...\n", room->nomeStanza);
     generateSuggestedWords(NUMBER_OF_SUGGESTED_WORD, parole);
     prepareWords(buffer, parole);
     //printf("%s", buffer);
@@ -68,7 +89,7 @@ int start_round(stanza *room, int idHostPlayer) {
     recv(room->players[idHostPlayer]->clientSocket, buffer, 32, 0 ); //In attesa di ricevere la parola scelta
     if(buffer[0] == 0) {
         printf("Connection error\n");
-        return -1;
+        return ADMIN_ERROR;
     }
     while(strcmp(parole[choosenWordIndex][0], buffer) != 0){ //Estrazione dell'indice della parola scelta dalla matrice
         choosenWordIndex++;
@@ -95,7 +116,8 @@ int start_round(stanza *room, int idHostPlayer) {
                 recv(room->players[i]->clientSocket, buffer, BUFFDIM, 0); //In attesa del tentativo
                 if(buffer[0] == 0) {
                     printf("Connection error\n");
-                    return -1;
+                    rm_user_from_room(room->players[i], room);
+                    return USER_ERROR;
                 }
                 printf("%s\n", buffer);
                 sendBroadcast(room, i, buffer);
@@ -137,9 +159,9 @@ void sendBroadcast(stanza* room, int idHost, char* msg) {
             continue;
         else {
             send(room->players[i]->clientSocket, msg, strlen(msg), 0);
-            //printf("waiting response from sock %d ... ", room->players[i]->clientSocket);
+            printf("waiting response from sock %d ... ", room->players[i]->clientSocket);
             recv(room->players[i]->clientSocket, response, BUFFDIM, 0);
-            //printf("%s\n", response);
+            printf("%s\n", response);
         }   
     }
 }
