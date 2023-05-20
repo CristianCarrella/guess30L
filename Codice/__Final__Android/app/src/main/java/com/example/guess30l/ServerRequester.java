@@ -42,9 +42,7 @@ public class ServerRequester {
     public ArrayList<String> waitUntilGameStarts(TextView partecipanti) {
         ArrayList<String> usernames = new ArrayList<String>();
         executors.execute(() -> {
-            Log.v("prova", "executor started");
             while (!gameIsStartedOrQuit) {
-                Log.v("prova", "In reading in wait until");
                 readUserInLobbyFromSocket(usernames, socket);
                 StringBuilder text = new StringBuilder();
                 for(String username : usernames)
@@ -61,9 +59,7 @@ public class ServerRequester {
         return usernames;
     }
 
-    //da cancellare
     public String joinRoom(int idRoom) {
-
         Future<String> future = executors.submit(new JoinCallable(idRoom, socket));
         try {
             return future.get();
@@ -112,20 +108,17 @@ public class ServerRequester {
     private static void readUserInLobbyFromSocket(ArrayList<String> usernames, Socket socket) {
         try {
             String jsonUsersInRoom = readSocket(socket);
-            Log.v("prova", jsonUsersInRoom);
             JSONArray jsonArray = new JSONArray(jsonUsersInRoom);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject json = jsonArray.getJSONObject(i);
                 String username = json.getString("username");
                 usernames.add(username);
-                Log.v("prova", username);
             }
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
     }
 
-    // da cancellare
     public void quitRoom() {
         executors.execute(()->{
             JSONObject obj = new JSONObject();
@@ -172,7 +165,7 @@ public class ServerRequester {
     }
 
     public int CreateRoomRequest(String nomeStanza, String numeroRound, String numeroMaxGiocatori) {
-        Future<String> future = executor.submit(new CreateRoomCallable(nomeStanza, numeroRound, numeroMaxGiocatori, socket));
+        Future<String> future = executors.submit(new CreateRoomCallable(nomeStanza, numeroRound, numeroMaxGiocatori, socket));
         try {
             JSONObject jsonString = new JSONObject(future.get());
             return jsonString.getInt("id");

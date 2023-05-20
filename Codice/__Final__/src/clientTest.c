@@ -343,7 +343,7 @@ int main(int argc, char *argv[]) {
         printf("Message sent to server: %s\n", json);
 
         /* PARTE AGGIUNTA PER LA LOBBY */
-        struct json_object *js = json_tokener_parse(json);
+        /*struct json_object *js = json_tokener_parse(json);
         const char *operation = json_object_get_string(json_object_object_get(js, "operation"));
         if(strcmp(operation, "joinRoom") == 0 || strcmp(operation, "startGame") == 0 || strcmp(operation, "createRoom") == 0){
             struct json_object *js2;
@@ -377,28 +377,26 @@ int main(int argc, char *argv[]) {
                 printf("Reply from server: %s\n", buffer);
             }
             memset(buffer, 0, sizeof buffer);
-        }
+        }*/
         /*----------------------------*/
 
-        /*if ((valread = read(sock, buffer, 1024)) == 0) {
-        if(op == 6) {
-            printf("Waiting for admin starting the game\n");
-            play(sock);
-        }
-        else if(op == 10) {
-            play(sock);
-        }
-        
         if ((valread = read(sock, buffer, 1024)) == 0) {
-            printf("Server disconnected.\n");
+            if(op == 6) {
+                printf("Waiting for admin starting the game\n");
+                play(sock);
+            }
+            else if(op == 10) {
+                play(sock);
+            }
+            
+            if ((valread = read(sock, buffer, 1024)) == 0) {
+                printf("Server disconnected.\n");
+            }
+            else {
+                printf("Reply from server: %s\n", buffer);
+            }
         }
-        else {
-            printf("Reply from server: %s\n", buffer);
-        }*/
-        
-        
     }
-
     
     close(sock);
     

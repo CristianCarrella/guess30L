@@ -127,10 +127,10 @@ void *handle2_client(void *par_) {
         }
         else if(strcmp(operation, "joinRoom") == 0){
             int idStanza = (int) json_object_get_int(json_object_object_get(js, "idStanza"));
-            stanza* stanz = get_stanza_by_id(idStanza);
-            bool result = add_user_in_room(utenteLoggato, stanz);
+            stanza* stanza = get_stanza_by_id(idStanza);
+            bool result = add_user_in_room(utenteLoggato, stanza);
             if(result){
-                stanzaAttuale = stanz;
+                stanzaAttuale = stanza;
             }
             
             struct json_object *jsonArray = json_object_new_array();
