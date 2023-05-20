@@ -49,6 +49,11 @@ public class ServerRequester {
                 readUserInLobbyFromSocket(usernames, socket);
                 if(usernames.contains("EXIT")){ //se è uscito l'admin
                     gameIsStartedOrQuit = true;
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     lobbyActivity.runOnUiThread(new Runnable() {
                         public void run() {
                             Intent myIntent = new Intent(lobbyActivity, HomeActivity.class);
