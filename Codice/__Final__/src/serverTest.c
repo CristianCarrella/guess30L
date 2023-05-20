@@ -1,6 +1,7 @@
 #include "../header/database.h"
 #include "../header/word.h"
 #include "../header/main.h"
+#include "../header/gameManager.h"
 // sudo apt install libjson-c-dev
 #include <json-c/json.h>
 
@@ -14,7 +15,30 @@ void checkConnectionToDb(PGconn *conn){
 	}
 }
 
+void sendResponse(struct json_object *json, int socket){
+    const char *jsonStr = json_object_to_json_string(json);
 
+    printf("%ld JSON response: %s\n", strlen(jsonStr), jsonStr);
+    if(send(socket, jsonStr, strlen(jsonStr), 0) == -1) {
+        perror("send failed");
+        exit(EXIT_FAILURE);
+    }
+    send(socket, "\n", 1, 0);
+}
+
+void sendBroadcast2(stanza* room, int idHost, char* msg) {
+    int i;
+    char response[BUFFDIM];
+    memset(response, 0, sizeof(response));
+    for(i = 0; i < room->numeroMaxGiocatori; i++){
+        if(room->players[i] == NULL || i == idHost)
+            continue;
+        else {
+            printf("%ld JSON response: %s to %s\n", strlen(msg), msg, room->players[i]->username);
+            send(room->players[i]->clientSocket, msg, strlen(msg), 0);
+        }   
+    }
+}
 
 typedef struct thread_par {
     int new_socket;
@@ -56,6 +80,7 @@ void *handle2_client(void *par_) {
                 printf("Login fallito\n");
                 json_object_object_add(json, "logged", json_object_new_string("false"));
             }
+            sendResponse(json, socket);
 		}
 		else if(strcmp(operation, "signup") == 0){
 			char* email = (char*) json_object_get_string(json_object_object_get(js, "email"));
@@ -68,6 +93,7 @@ void *handle2_client(void *par_) {
                 printf("Signup fallito\n");
                 json_object_object_add(json, "signed", json_object_new_string("false"));
             }
+            sendResponse(json, socket);
 		}
         else if(strcmp(operation, "getAvatar") == 0){
             char* email = (char*) json_object_get_string(json_object_object_get(js, "email"));
@@ -75,6 +101,7 @@ void *handle2_client(void *par_) {
 
             json_object_object_add(json, "email", json_object_new_string(email));
             json_object_object_add(json, "avatarBase64", json_object_new_string(base64image_encoded)); //al client arriverà con dei backslash in più
+            sendResponse(json, socket);
         }
         else if(strcmp(operation, "setAvatar") == 0){
             char* email = (char*) json_object_get_string(json_object_object_get(js, "email"));
@@ -83,6 +110,7 @@ void *handle2_client(void *par_) {
 
             json_object_object_add(json, "email", json_object_new_string(email));
             json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
+            sendResponse(json, socket);
         }
         else if(strcmp(operation, "getUserInfo") == 0){
             char* email = (char*) json_object_get_string(json_object_object_get(js, "email"));
@@ -94,7 +122,7 @@ void *handle2_client(void *par_) {
             json_object_object_add(json, "partiteVinte", json_object_new_int(u->partiteVinte));
             json_object_object_add(json, "username", json_object_new_string(u->username));
             free(u);
-
+            sendResponse(json, socket);
         }
         else if(strcmp(operation, "joinRoom") == 0){
             int idStanza = (int) json_object_get_int(json_object_object_get(js, "idStanza"));
@@ -105,20 +133,19 @@ void *handle2_client(void *par_) {
             }
             
             struct json_object *jsonArray = json_object_new_array();
-            printf("%d", stanza->numeroMaxGiocatori);
             for(int i = 0; i < stanza->numeroMaxGiocatori; i++){
                 if(stanza->players[i] != NULL){
                     struct json_object * jsonUser = json_object_new_object();
-                    printf("%s provaaa\n", stanza->players[i]->username);
                     json_object_object_add(jsonUser, "username", json_object_new_string(stanza->players[i]->username));
                     json_object_array_add(jsonArray, jsonUser);
-                }else{
-                    printf("prova2");
-                }  
+                }
             }
             
             json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
             json = jsonArray;
+
+            const char *jsonStr = json_object_to_json_string(json);
+            sendBroadcast2(stanza, -1, (char*)jsonStr);
         }
         else if(strcmp(operation, "searchRoom") == 0){
             // stanza * stanzeTmp[50];
@@ -136,6 +163,7 @@ void *handle2_client(void *par_) {
             json = jsonArray;
             //strcpy(json, json_object_to_json_string(jsonArray));
             //printf("%s",json);
+            sendResponse(json, socket);
         }
         else if(strcmp(operation, "createRoom") == 0){
             char* nomeStanza = (char*) json_object_get_string(json_object_object_get(js, "nomeStanza"));
@@ -145,25 +173,33 @@ void *handle2_client(void *par_) {
             stanzaAttuale = get_stanza_by_id(id);
             printf("stanza creata: %s\n",stanzaAttuale->nomeStanza);
             json_object_object_add(json, "id", json_object_new_int(id));
+
+            sendResponse(json, socket);
         }
         else if(strcmp(operation, "quitRoom") == 0){
-            bool result = rm_user_from_room(utenteLoggato,stanzaAttuale);
-            stanzaAttuale = NULL;
+            bool result = rm_user_from_room(utenteLoggato, stanzaAttuale);  
+            struct json_object *jsonArray = json_object_new_array();
+            for(int i = 0; i < stanzaAttuale->numeroMaxGiocatori; i++){
+                if(stanzaAttuale->players[i] != NULL){
+                    struct json_object * jsonUser = json_object_new_object();
+                    json_object_object_add(jsonUser, "username", json_object_new_string(stanzaAttuale->players[i]->username));
+                    json_object_array_add(jsonArray, jsonUser);
+                }
+            }
+            
             json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
+            json = jsonArray;
+
+            const char *jsonStr = json_object_to_json_string(json);
+            sendBroadcast2(stanzaAttuale, -1, (char*)jsonStr);
+            stanzaAttuale = NULL;
+
         }
         else if(strcmp(operation, "startGame") == 0){
             
         }
 
-        const char *jsonStr = json_object_to_json_string(json);
-    
         
-        printf("%ld JSON response: %s", strlen(jsonStr), jsonStr);
-        if(send(socket, jsonStr, strlen(jsonStr), 0) == -1) {
-            perror("send failed");
-            exit(EXIT_FAILURE);
-        }
-        send(socket, "\n", 1, 0);
         //free(json);
 
         printf("\n\n");

@@ -1,22 +1,21 @@
 package com.example.guess30l;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Base64;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.example.guess30l.models.LoggedUser;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -25,22 +24,125 @@ import java.util.concurrent.Future;
 
 public class ServerRequester {
     private final int PORT = 5000;
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    public static ExecutorService executors =  Executors.newFixedThreadPool(100);
+    public static boolean gameIsStartedOrQuit = false;
     Socket socket;
+
     public ServerRequester(){
         /* Le operazioni di rete non si possono fare sul thread UI */
-        executor.execute(() -> {
+        executors.execute(() -> {
             try{
                 socket = new Socket("10.0.2.2", PORT);
-                socket.setSoTimeout(3000);
             }catch(IOException e){
                 e.printStackTrace();
             }
         });
     }
 
+    public ArrayList<String> waitUntilGameStarts(TextView partecipanti) {
+        ArrayList<String> usernames = new ArrayList<String>();
+        executors.execute(() -> {
+            Log.v("prova", "executor started");
+            while (!gameIsStartedOrQuit) {
+                Log.v("prova", "In reading in wait until");
+                readUserInLobbyFromSocket(usernames, socket);
+                StringBuilder text = new StringBuilder();
+                for(String username : usernames)
+                    text.append(username).append("\n");
+                partecipanti.post(new Runnable(){
+                    @Override
+                    public void run() {
+                        partecipanti.setText(text.toString());
+                    }
+                });
+                usernames.clear();
+            }
+        });
+        return usernames;
+    }
+
+    //da cancellare
+    public String joinRoom(int idRoom) {
+
+        Future<String> future = executors.submit(new JoinCallable(idRoom, socket));
+        try {
+            return future.get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private static class JoinCallable implements Callable<String> {
+        Integer idRoom;
+        Socket socket;
+
+        public JoinCallable(Integer idRoom, Socket socket) {
+            this.idRoom = idRoom;
+            this.socket = socket;
+        }
+
+        @Override
+        public String call() throws Exception {
+            JSONObject obj = new JSONObject();
+            StringBuilder text = new StringBuilder();
+            ArrayList<String> usernames = new ArrayList<String>();
+            try {
+                obj.put("operation", "joinRoom");
+                obj.put("idStanza", idRoom);
+
+                PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
+                printWriter.print(obj);
+                printWriter.flush();
+                Log.v("prova", "In reading in join");
+                readUserInLobbyFromSocket(usernames, socket);
+
+                for(String username : usernames)
+                    text.append(username).append("\n");
+
+                return text.toString();
+
+            } catch (JSONException | IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    private static void readUserInLobbyFromSocket(ArrayList<String> usernames, Socket socket) {
+        try {
+            String jsonUsersInRoom = readSocket(socket);
+            Log.v("prova", jsonUsersInRoom);
+            JSONArray jsonArray = new JSONArray(jsonUsersInRoom);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject json = jsonArray.getJSONObject(i);
+                String username = json.getString("username");
+                usernames.add(username);
+                Log.v("prova", username);
+            }
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // da cancellare
+    public void quitRoom() {
+        executors.execute(()->{
+            JSONObject obj = new JSONObject();
+            try {
+                obj.put("operation", "quitRoom");
+                Log.v("prova", obj.toString());
+                PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
+                printWriter.print(obj);
+                printWriter.flush();
+            } catch (JSONException | IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
     public boolean loginRequest(String email, String password) {
-        Future<String> future = executor.submit(new LoginCallable(email, password, socket));
+        Future<String> future = executors.submit(new LoginCallable(email, password, socket));
         try {
             JSONObject jsonString = new JSONObject(future.get());
             return jsonString.getBoolean("logged");
@@ -50,7 +152,7 @@ public class ServerRequester {
     }
 
     public boolean signupRequest(String email, String password, String username) {
-        Future<String> future = executor.submit(new SignUpCallable(email, password, username, socket));
+        Future<String> future = executors.submit(new SignUpCallable(email, password, username, socket));
         try {
             JSONObject jsonString = new JSONObject(future.get());
             return jsonString.getBoolean("signed");
@@ -60,7 +162,7 @@ public class ServerRequester {
     }
 
     public LoggedUser getUserInfoRequest(String email) {
-        Future<String> future = executor.submit(new InfoUserCallable(email, socket));
+        Future<String> future = executors.submit(new InfoUserCallable(email, socket));
         try {
             JSONObject jsonString = new JSONObject(future.get());
             return new LoggedUser(jsonString.getString("email"), jsonString.getInt("idStanza"), jsonString.getInt("imgId"), jsonString.getInt("partiteVinte"), jsonString.getString("username"));
@@ -70,7 +172,7 @@ public class ServerRequester {
     }
 
     public String getUserAvatar(String email) {
-        Future<String> future = executor.submit(new AvatarCallable(email, socket));
+        Future<String> future = executors.submit(new AvatarCallable(email, socket));
         try {
             JSONObject jsonString = new JSONObject(future.get());
             return jsonString.getString("avatarBase64");
@@ -83,7 +185,7 @@ public class ServerRequester {
     }
 
     public boolean setUserAvatar(String email, Integer avatarChoosen) {
-        Future<String> future = executor.submit(new ChangeAvatarCallable(email, avatarChoosen, socket));
+        Future<String> future = executors.submit(new ChangeAvatarCallable(email, avatarChoosen, socket));
         try {
             JSONObject jsonString = new JSONObject(future.get());
             return jsonString.getBoolean("isSuccess");
@@ -91,6 +193,8 @@ public class ServerRequester {
             return false;
         }
     }
+
+
 
     private static class SignUpCallable implements Callable<String> {
         String email, password, username;

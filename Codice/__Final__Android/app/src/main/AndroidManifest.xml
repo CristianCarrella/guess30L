@@ -16,6 +16,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Guess30L"
         tools:targetApi="tiramisu">
+
+        <activity
+            android:name=".LobbyActivity"
+            android:exported="false"
+            android:label="@string/title_activity_lobby"
+            android:theme="@style/Theme.Guess30L.NoActionBar">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".ChangeAvatarActivity"
             android:exported="false">

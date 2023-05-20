@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -41,14 +42,14 @@ public class HomeActivity extends AppCompatActivity {
             InputStream inputStream  = new ByteArrayInputStream(decodedString);
             Bitmap bitmap  = BitmapFactory.decodeStream(inputStream);
             imageProfile.setImageBitmap(bitmap);
-        }catch (IllegalArgumentException e){
+        }catch (IllegalArgumentException | NullPointerException e){
             e.printStackTrace();
         }
 
         View.OnClickListener joinRoomListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                goToTmpLobbyActivity();
             }
         };
 
@@ -89,6 +90,20 @@ public class HomeActivity extends AppCompatActivity {
 
     private void goToChangeAvatarActivity() {
         Intent myIntent = new Intent(HomeActivity.this, ChangeAvatarActivity.class);
+        HomeActivity.this.startActivity(myIntent);
+    }
+
+    private void goToTmpLobbyActivity() {
+        String partecipanti = MainActivity.serverRequester.joinRoom(0);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        ServerRequester.gameIsStartedOrQuit = false;
+        Log.v("prova", "partecipanti: " + partecipanti);
+        Intent myIntent = new Intent(HomeActivity.this, LobbyActivity.class);
+        myIntent.putExtra("partecipantiIniziali", partecipanti);
         HomeActivity.this.startActivity(myIntent);
     }
 
