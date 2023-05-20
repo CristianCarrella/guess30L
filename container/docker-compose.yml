@@ -11,7 +11,7 @@ services:
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: admin
-      POSTGRES_DB: lso
+      POSTGRES_DB: postgres
     volumes:
       - ./sql/NewDb.sql:/docker-entrypoint-initdb.d/create_tables.sql
       - ./sql/NewQueries.sql:/docker-entrypoint-initdb.d/fill_tables.sql

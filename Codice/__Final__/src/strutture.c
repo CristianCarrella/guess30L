@@ -86,8 +86,7 @@ int add_user_in_room(utente *user, stanza *room){
 	//acquisizione
 	pthread_mutex_lock(&mutex);
 	int tmp = -1;
-	for (int i = 0; i < room->numeroMaxGiocatori; i++)
-	{
+	for (int i = 0; i < room->numeroMaxGiocatori; i++){
 		if(room->players[i] != NULL ){
 			if(room->players[i] == user){
 				success = true;
@@ -132,8 +131,7 @@ int rm_user_from_room(utente *user, stanza *room ){
 	if(room->adminUser == user){
 		success = rm_stanza(room);
 	}
-	else for (int i = 0; i < room->numeroMaxGiocatori; i++)
-	{
+	else for (int i = 0; i < room->numeroMaxGiocatori; i++){
 		if(room->players[i] != NULL){
 			if(room->players[i] == user){
 				user->idStanza = -1;
@@ -156,6 +154,7 @@ int add_stanza(char *name, int max_player, utente *admin){
 		{
 			stanze[i] = new_stanza(i, name, max_player, admin);
 			id = i;
+			admin->idStanza = id;
 			break;
 		}
 	}
@@ -190,10 +189,7 @@ void visualizza_stanze(){
 			}
 		}
 	}
-	
 }
-
-
 
 #endif
 
