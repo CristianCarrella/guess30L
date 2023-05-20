@@ -57,4 +57,6 @@ stanza *get_stanza_by_id(int id);
 //STAMPA SU CONSOLE FUNZIONE TEMPORANEA
 void visualizza_stanze();
 
+bool isAdmin(utente*, stanza*);
+
 #endif

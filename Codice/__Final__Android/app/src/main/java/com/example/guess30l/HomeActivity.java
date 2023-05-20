@@ -95,11 +95,6 @@ public class HomeActivity extends AppCompatActivity {
 
     private void goToTmpLobbyActivity() {
         String partecipanti = MainActivity.serverRequester.joinRoom(0);
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         ServerRequester.gameIsStartedOrQuit = false;
         Log.v("prova", "partecipanti: " + partecipanti);
         Intent myIntent = new Intent(HomeActivity.this, LobbyActivity.class);

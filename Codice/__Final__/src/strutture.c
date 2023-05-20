@@ -112,6 +112,9 @@ int add_user_in_room_by_id(utente *user, int id){
 	add_user_in_room(user,get_stanza_by_id(id));
 }
 
+bool isAdmin(utente *user, stanza *room){
+	return (room->adminUser->username == user->username);
+}
 
 //rimuovi utente !!!!!CONDRONTA I PUNTATORI!!!!!
 int rm_user_from_room(utente *user, stanza *room ){

@@ -24,7 +24,7 @@ public class LobbyActivity extends AppCompatActivity {
         Button exit = findViewById(R.id.exitButton);
         TextView partecipanti = findViewById(R.id.partecipanti);
         partecipanti.setText(getIntent().getStringExtra("partecipantiIniziali"));
-        MainActivity.serverRequester.waitUntilGameStarts(partecipanti);
+        MainActivity.serverRequester.waitUntilGameStarts(partecipanti, this);
 
         View.OnClickListener exitListener = new View.OnClickListener() {
             @Override

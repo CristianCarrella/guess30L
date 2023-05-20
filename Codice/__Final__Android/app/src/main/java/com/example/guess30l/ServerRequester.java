@@ -1,5 +1,6 @@
 package com.example.guess30l;
 
+import android.content.Intent;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -39,20 +40,31 @@ public class ServerRequester {
         });
     }
 
-    public ArrayList<String> waitUntilGameStarts(TextView partecipanti) {
+    public ArrayList<String> waitUntilGameStarts(TextView partecipanti, LobbyActivity lobbyActivity) {
         ArrayList<String> usernames = new ArrayList<String>();
         executors.execute(() -> {
             while (!gameIsStartedOrQuit) {
                 readUserInLobbyFromSocket(usernames, socket);
-                StringBuilder text = new StringBuilder();
-                for(String username : usernames)
-                    text.append(username).append("\n");
-                partecipanti.post(new Runnable(){
-                    @Override
-                    public void run() {
-                        partecipanti.setText(text.toString());
-                    }
-                });
+                if(usernames.contains("EXIT")){ //se è uscito l'admin
+                    gameIsStartedOrQuit = true;
+                    lobbyActivity.runOnUiThread(new Runnable() {
+                        public void run() {
+                            Intent myIntent = new Intent(lobbyActivity, HomeActivity.class);
+                            lobbyActivity.startActivity(myIntent);
+                        }
+                    });
+                }else{
+                    StringBuilder text = new StringBuilder();
+                    for(String username : usernames)
+                        text.append(username).append("\n");
+                    partecipanti.post(new Runnable(){
+                        @Override
+                        public void run() {
+                            partecipanti.setText(text.toString());
+                        }
+                    });
+                }
+
                 usernames.clear();
             }
         });
@@ -108,12 +120,17 @@ public class ServerRequester {
     private static void readUserInLobbyFromSocket(ArrayList<String> usernames, Socket socket) {
         try {
             String jsonUsersInRoom = readSocket(socket);
-            JSONArray jsonArray = new JSONArray(jsonUsersInRoom);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject json = jsonArray.getJSONObject(i);
-                String username = json.getString("username");
-                usernames.add(username);
+            if(jsonUsersInRoom.contains("adminExited")){ //se è uscito l'admin
+                usernames.add("EXIT");
+            }else{
+                JSONArray jsonArray = new JSONArray(jsonUsersInRoom);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject json = jsonArray.getJSONObject(i);
+                    String username = json.getString("username");
+                    usernames.add(username);
+                }
             }
+
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
