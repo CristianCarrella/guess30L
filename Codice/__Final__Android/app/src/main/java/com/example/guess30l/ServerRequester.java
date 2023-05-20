@@ -34,6 +34,7 @@ public class ServerRequester {
         executors.execute(() -> {
             try{
                 socket = new Socket("10.0.2.2", PORT);
+                socket.setSoTimeout(100000000);
             }catch(IOException e){
                 e.printStackTrace();
             }
@@ -44,6 +45,7 @@ public class ServerRequester {
         ArrayList<String> usernames = new ArrayList<String>();
         executors.execute(() -> {
             while (!gameIsStartedOrQuit) {
+                Log.v("prova", "In reading in waitUntil");
                 readUserInLobbyFromSocket(usernames, socket);
                 if(usernames.contains("EXIT")){ //se è uscito l'admin
                     gameIsStartedOrQuit = true;
@@ -64,7 +66,6 @@ public class ServerRequester {
                         }
                     });
                 }
-
                 usernames.clear();
             }
         });
