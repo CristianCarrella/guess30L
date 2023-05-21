@@ -36,7 +36,7 @@ void sendBroadcast2(stanza* room, int idHost, char* msg) {
         else {
             printf("%ld JSON response: %s to %s\n", strlen(msg), msg, room->players[i]->username);
             send(room->players[i]->clientSocket, msg, strlen(msg), 0);
-        }   
+        }
     }
 }
 
@@ -123,17 +123,22 @@ void *handle2_client(void *par_) {
             json_object_object_add(json, "partiteVinte", json_object_new_int(u->partiteVinte));
             json_object_object_add(json, "username", json_object_new_string(u->username));
             free(u);
-            sendResponse(json, socket);
+
+			sendResponse(json, socket);
+			printf("\neseguo getUserInfo\n");
+
         }
         else if(strcmp(operation, "joinRoom") == 0){
             int idStanza = (int) json_object_get_int(json_object_object_get(js, "idStanza"));
             stanza* stanza = get_stanza_by_id(idStanza);
             bool result = add_user_in_room(utenteLoggato, stanza);
             if(result){
-
                 stanzaAttuale = stanza;
+                printf("SUCCESS");
+            }else{
+                printf("LA STANZA É PEINA");
             }
-            
+
             struct json_object *jsonArray = json_object_new_array();
             for(int i = 0; i < stanza->numeroMaxGiocatori; i++){
                 if(stanza->players[i] != NULL){
@@ -142,21 +147,29 @@ void *handle2_client(void *par_) {
                     json_object_array_add(jsonArray, jsonUser);
                 }
             }
-            
-            json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
-            json = jsonArray;
 
-            const char *jsonStr = json_object_to_json_string(json);
-            sendBroadcast2(stanza, -1, (char*)jsonStr);
+            json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
+						json = jsonArray;
+
+						const char *jsonStr = json_object_to_json_string(json);
+						sendBroadcast2(stanza, -1, (char*)jsonStr);
+
+						////////////////////////////////
+            // signal(SIGUSR1, thread_unlock);
+            // pause();
+            // printf("tread unlocked for %s\n", utenteLoggato->username);
+            ////////////////////////////////
         }
         else if(strcmp(operation, "searchRoom") == 0){
             // stanza * stanzeTmp[50];
             struct json_object * jsonArray = json_object_new_array();
             for(int i = 0; i < stanze_lenght; i++){
-		        if(stanze[i] != NULL){
+		        if(stanze[i] != NULL && stanze[i]->started == false){
                     struct json_object * jsonStanza = json_object_new_object();
 
                     json_object_object_add(jsonStanza, "id", json_object_new_int(i));
+                    json_object_object_add(jsonStanza, "numeroMaxGiocatori", json_object_new_int(stanze[i]->numeroMaxGiocatori));
+                    json_object_object_add(jsonStanza, "actualPlayersNumber", json_object_new_int(get_number_of_player_in_stanza(i)));
                     json_object_object_add(jsonStanza, "nomeStanza", json_object_new_string(stanze[i]->nomeStanza));
 
                     json_object_array_add(jsonArray, jsonStanza);
@@ -185,7 +198,7 @@ void *handle2_client(void *par_) {
                 sendBroadcast2(stanzaAttuale, -1, (char*)jsonStr);
                 bool result = rm_user_from_room(utenteLoggato, stanzaAttuale);
             }else{
-                bool result = rm_user_from_room(utenteLoggato, stanzaAttuale);  
+                bool result = rm_user_from_room(utenteLoggato, stanzaAttuale);
                 struct json_object *jsonArray = json_object_new_array();
                 for(int i = 0; i < stanzaAttuale->numeroMaxGiocatori; i++){
                     if(stanzaAttuale->players[i] != NULL){
@@ -194,7 +207,7 @@ void *handle2_client(void *par_) {
                         json_object_array_add(jsonArray, jsonUser);
                     }
                 }
-                
+
                 json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
                 json = jsonArray;
 
@@ -267,7 +280,7 @@ int main(int argc, char *argv[]) {
     }
 
     printf("Server started listening on port %d...\n", PORT);
-    
+
     while (1) {
         if ((par.new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {
             perror("accept failed");
