@@ -1,10 +1,12 @@
 package com.example.guess30l;
 
 import android.content.Intent;
+import android.os.Debug;
 import android.util.Log;
 import android.widget.TextView;
 
 import com.example.guess30l.models.LoggedUser;
+import com.example.guess30l.models.Stanza;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -76,6 +78,17 @@ public class ServerRequester {
         });
         return usernames;
     }
+
+//    public String joinRoom(int idRoom) {
+//        Future<String> future = executors.submit(new JoinCallable(idRoom, socket));
+//        try {
+//            JSONObject jsonString = new JSONObject(future.get());
+//            return jsonString.getBoolean("isSuccess");
+//        } catch (ExecutionException | InterruptedException | JSONException e) {
+//            e.printStackTrace();
+//        }
+//        return false;
+//    }
 
     public String joinRoom(int idRoom) {
         Future<String> future = executors.submit(new JoinCallable(idRoom, socket));
@@ -194,6 +207,22 @@ public class ServerRequester {
             return jsonString.getInt("id");
         } catch (ExecutionException | InterruptedException | JSONException e) {
             return -1;
+        }
+    }
+
+    public Stanza[] SearchRoomRequest() {
+        Future<String> future = executors.submit(new SearchRoomCallable(socket));
+        try {
+            JSONArray jsonArray = new JSONArray(future.get());
+
+            Stanza[] room = new Stanza[jsonArray.length()];
+            for (int i = 0 ; i<jsonArray.length() ; i++){
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                room[i] = new Stanza(jsonObject.getInt("id"),jsonObject.getInt("numeroMaxGiocatori"),jsonObject.getInt("actualPlayersNumber"), jsonObject.getString("nomeStanza"));
+            }
+            return room;
+        } catch (ExecutionException | InterruptedException | JSONException e) {
+            return new Stanza[]{};
         }
     }
 
@@ -427,6 +456,33 @@ public class ServerRequester {
         }
     }
 
+    private static class SearchRoomCallable implements Callable<String> {
+        Socket socket;
+
+        public SearchRoomCallable(Socket socket) {
+            this.socket = socket;
+        }
+
+        @Override
+        public String call() throws Exception {
+            try{
+                JSONObject obj = new JSONObject();
+
+                obj.put("operation", "searchRoom");
+
+                PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
+                printWriter.print(obj);
+                printWriter.flush();
+
+                return readSocket(socket);
+
+            }catch(IOException | JSONException e){
+                e.printStackTrace();
+                return null;
+            }
+        }
+    }
+
     public static String readSocket(Socket socket) throws IOException {
         InputStream input = socket.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));
@@ -448,6 +504,7 @@ public class ServerRequester {
                 }
             }
         }
+        Log.d("read socket",sb.toString());
         return sb.toString();
     }
 }

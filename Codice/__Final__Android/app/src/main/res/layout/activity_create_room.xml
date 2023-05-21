@@ -20,7 +20,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/numeroMaxPersoneText"
         tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck"
-        tools:text="5" />
+        android:autofillHints="" />
 
     <EditText
         android:id="@+id/nomeStamzaField"
@@ -36,14 +36,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nomeStanza"
         tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck"
-        tools:text="gg" />
+        android:autofillHints="Nome Stamza" />
 
     <TextView
         android:id="@+id/numeroRoundText"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:layout_marginTop="20dp"
-        android:text="Numero di round"
+        android:text="@string/create_room_round_number"
         android:textColor="#000000"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -66,14 +66,14 @@
         app:layout_constraintTop_toBottomOf="@+id/numeroRoundText"
         app:layout_constraintVertical_bias="0.026"
         tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck"
-        tools:text="5" />
+        android:autofillHints="" />
 
     <TextView
         android:id="@+id/nomeStanza"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:layout_marginTop="20dp"
-        android:text="Nome della stanza"
+        android:text="@string/create_room_room_name"
         android:textColor="#000000"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -86,7 +86,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="Numero massimo partecipanti"
+        android:text="@string/create_room_max_player"
         android:textColor="#000000"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -100,7 +100,7 @@
         android:layout_height="38dp"
         android:background="@drawable/btn3"
         android:paddingBottom="5dp"
-        android:text="Crea"
+        android:text="@string/create_room_crea"
         android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -114,7 +114,7 @@
         android:id="@+id/creaStanzaTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Crea una stanza"
+        android:text="@string/create_room_create_room"
         android:textColor="#000000"
         android:textSize="24sp"
         android:textStyle="bold"

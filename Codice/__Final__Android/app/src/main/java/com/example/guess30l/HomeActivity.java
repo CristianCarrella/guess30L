@@ -49,7 +49,8 @@ public class HomeActivity extends AppCompatActivity {
         View.OnClickListener joinRoomListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToTmpLobbyActivity();
+                goToJoinRoomActivity();
+                //goToTmpLobbyActivity();
             }
         };
 
@@ -85,6 +86,11 @@ public class HomeActivity extends AppCompatActivity {
     }
     private void goToCreateRoomActivity() {
         Intent myIntent = new Intent(HomeActivity.this, CreateRoomActivity.class);
+        HomeActivity.this.startActivity(myIntent);
+    }
+
+    private void goToJoinRoomActivity() {
+        Intent myIntent = new Intent(HomeActivity.this, JoinRoomActivity.class);
         HomeActivity.this.startActivity(myIntent);
     }
 
