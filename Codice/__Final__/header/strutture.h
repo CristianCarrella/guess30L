@@ -54,9 +54,17 @@ int add_stanza(char *name, int max_player, utente *admin);
 
 stanza *get_stanza_by_id(int id);
 
+int get_number_of_player_in_stanza(int id);
+
+utente* visualizza_stanza(int id);
+
 //STAMPA SU CONSOLE FUNZIONE TEMPORANEA
 void visualizza_stanze();
 
 bool isAdmin(utente*, stanza*);
+
+void rm_user_from_last_room(utente *user);
+
+int rm_user_from_room_by_username(char username[32], stanza *room );
 
 #endif
