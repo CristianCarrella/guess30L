@@ -85,6 +85,7 @@ public class JoinRoomActivity extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
+        updateRooms();
         SetJoinCliccable(false);
     }
 

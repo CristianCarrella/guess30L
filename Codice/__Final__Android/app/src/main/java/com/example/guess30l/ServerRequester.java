@@ -155,6 +155,9 @@ public class ServerRequester {
         }
     }
 
+    /**
+     * METODO DA SISTEMARE DEVE RITORNARE BOLEAN E DEVE RICEVERE DAL SOCKET ALTRIMENTI BLOCCA TUTTO
+     */
     public void quitRoom() {
         executors.execute(()->{
             JSONObject obj = new JSONObject();
