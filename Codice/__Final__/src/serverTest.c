@@ -145,7 +145,6 @@ void *handle2_client(void *par_) {
             }
 
             json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
-
             json = jsonArray;
 
             if(result){
@@ -220,31 +219,19 @@ void *handle2_client(void *par_) {
 
         }
         else if(strcmp(operation, "startGame") == 0){
-
+            char winnerEmail[64];
+            char* email;
             int result = 1;
-
+            email = start_room(get_stanza_by_id(utenteLoggato->idStanza), 2);
+            rm_stanza_by_id(utenteLoggato->idStanza);
+            strcpy(winnerEmail, email);
+            updateUserPartiteVinte(conn, winnerEmail);
 
             json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
             sendResponse(json, socket);
         }
 
         //free(json);
-
-        if(strcmp(operation, "joinRoom")){
-            ////////////////////////////////
-            signal(SIGUSR1, thread_unlock);
-            pause();
-            printf("tread unlocked for %s\n", utenteLoggato->username);
-            ////////////////////////////////
-        }
-        else if(strcmp(operation, "startRoom")) {
-            char winnerEmail[64];
-            char* email;
-            email = start_room(get_stanza_by_id(utenteLoggato->idStanza), 2);
-            rm_stanza_by_id(utenteLoggato->idStanza);
-            strcpy(winnerEmail, email);
-            updateUserPartiteVinte(conn, winnerEmail);
-        }
 
         printf("\n\n");
         memset(buffer, 0, sizeof(buffer));
