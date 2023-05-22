@@ -82,7 +82,7 @@ int add_user_in_room(utente *user, stanza *room){
 	if(user == NULL || room == NULL){
 		return false;
 	}
-
+	
 	rm_user_from_last_room(user);
 
 	int success = false;

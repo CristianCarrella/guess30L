@@ -101,7 +101,7 @@ void *handle2_client(void *par_) {
             char* base64image_encoded = getAvatarByEmail(conn, email,  pthread_self());
 
             json_object_object_add(json, "email", json_object_new_string(email));
-            json_object_object_add(json, "avatarBase64", json_object_new_string(base64image_encoded)); //al client arriverà con dei backslash in più
+            json_object_object_add(json, "avatarBase64", json_object_new_string("base64image_encoded")); //al client arriverà con dei backslash in più base64image_encoded
             sendResponse(json, socket);
         }
         else if(strcmp(operation, "setAvatar") == 0){
@@ -132,29 +132,29 @@ void *handle2_client(void *par_) {
             int idStanza = (int) json_object_get_int(json_object_object_get(js, "idStanza"));
             stanza* stanza = get_stanza_by_id(idStanza);
             bool result = add_user_in_room(utenteLoggato, stanza);
+            struct json_object *jsonArray = json_object_new_array();
             if(result){
                 stanzaAttuale = stanza;
-                printf("SUCCESS");
-            }else{
-                printf("LA STANZA É PEINA");
-            }
-
-            struct json_object *jsonArray = json_object_new_array();
-            for(int i = 0; i < stanza->numeroMaxGiocatori; i++){
-                if(stanza->players[i] != NULL){
-                    struct json_object * jsonUser = json_object_new_object();
-                    json_object_object_add(jsonUser, "username", json_object_new_string(stanza->players[i]->username));
-                    json_object_array_add(jsonArray, jsonUser);
+                for(int i = 0; i < stanza->numeroMaxGiocatori; i++){
+                    if(stanza->players[i] != NULL){
+                        struct json_object * jsonUser = json_object_new_object();
+                        json_object_object_add(jsonUser, "username", json_object_new_string(stanza->players[i]->username));
+                        json_object_array_add(jsonArray, jsonUser);
+                    }
                 }
             }
 
             json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
-						json = jsonArray;
+            json = jsonArray;
 
-						const char *jsonStr = json_object_to_json_string(json);
-						sendBroadcast2(stanza, -1, (char*)jsonStr);
+            if(result){
+                const char *jsonStr = json_object_to_json_string(json);
+                sendBroadcast2(stanza, -1, (char*)jsonStr);
+            }else{
+                sendResponse(json, socket);
+            }
 
-						////////////////////////////////
+            ////////////////////////////////
             // signal(SIGUSR1, thread_unlock);
             // pause();
             // printf("tread unlocked for %s\n", utenteLoggato->username);

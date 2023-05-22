@@ -20,7 +20,7 @@ typedef struct {
 
 typedef struct {
 	int idStanza;
-	char nomeStanza[16];
+	char nomeStanza[16]; //Da aumentare
 	int numeroMaxGiocatori;
 	int turn;
 	bool started;
