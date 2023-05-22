@@ -145,8 +145,7 @@ void *handle2_client(void *par_) {
             }
 
             json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
-<<<<<<< HEAD
-=======
+
             json = jsonArray;
 
             if(result){
@@ -161,7 +160,6 @@ void *handle2_client(void *par_) {
             // pause();
             // printf("tread unlocked for %s\n", utenteLoggato->username);
             ////////////////////////////////
->>>>>>> 1a2c69a6ed3be37318e412d1f0a0ffa96bca6430
         }
         else if(strcmp(operation, "searchRoom") == 0){
             // stanza * stanzeTmp[50];
@@ -222,7 +220,7 @@ void *handle2_client(void *par_) {
 
         }
         else if(strcmp(operation, "startGame") == 0){
-            
+
             int result = 1;
 
 
