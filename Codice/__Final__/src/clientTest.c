@@ -161,7 +161,8 @@ char* prepareSearchRoom(){
     return (char*)jsonStr;
 }
 
-char* prepareOperation(int op, int socket){
+
+char* prepareOperation(int op){
     //while(true){
         switch(op){
             case 1:
@@ -292,14 +293,19 @@ void play(int sock) {
     return;
 }
 
-char *prepareStartGame() {
+char *prepareStartGame(){
     struct json_object *json = json_object_new_object();
+    int idStanza;
+    printf("Inserisci il nome della stanza da iniziare: ");
+    scanf("%d", &idStanza);
     json_object_object_add(json, "operation", json_object_new_string("startGame"));
+    json_object_object_add(json, "idStanzaStarting", json_object_new_int(idStanza));
 
     // Convertire l'oggetto JSON in una stringa
     const char *jsonStr = json_object_to_json_string(json);
     return (char*)jsonStr;
 }
+
 
 int main(int argc, char *argv[]) {
     int sock = 0, valread;
@@ -327,31 +333,70 @@ int main(int argc, char *argv[]) {
     }
     while(1) {
         printf("1. Login\n2. Signup\n3. GetAvatar\n4. SetAvatar\n5. GetUserInfo\n");
-        printf("6. prepareJoinRoom\n7. prepareSearchRoom\n8. prepareCreateRoom\n9. prepareQuitRoom \n10. startGame");
+        printf("6. prepareJoinRoom\n7. prepareSearchRoom\n8. prepareCreateRoom\n9. prepareQuitRoom \n10. startGame\n");
         scanf("%d", &op);
-        json = prepareOperation(op, sock);
-
+        json = prepareOperation(op);
         if (send(sock, json, strlen(json), 0) == -1) {
             perror("send failed");
             exit(EXIT_FAILURE);
         }
         printf("Message sent to server: %s\n", json);
-        if(op == 6) {
-            printf("Waiting for admin starting the game\n");
-            play(sock);
-        }
-        else if(op == 10) {
-            play(sock);
-        }
-        
-        if ((valread = read(sock, buffer, 1024)) == 0) {
-            printf("Server disconnected.\n");
-        }
-        else {
-            printf("Reply from server: %s\n", buffer);
-        }
-    }
 
+        /* PARTE AGGIUNTA PER LA LOBBY */
+        struct json_object *js = json_tokener_parse(json);
+        const char *operation = json_object_get_string(json_object_object_get(js, "operation"));
+        if(strcmp(operation, "joinRoom") == 0 || strcmp(operation, "startGame") == 0 || strcmp(operation, "createRoom") == 0){
+            struct json_object *js2;
+            if(strcmp(operation, "createRoom") == 0){
+                read(sock, buffer, 1024);
+                printf("Reply from server: %s\n", buffer);
+                js2 = json_tokener_parse(buffer);
+            }
+            int idStanzaJoined = -1, idStanzaStarted = -1, idStanzaCreated = -1;
+            if(strcmp(operation, "createRoom") == 0){
+                idStanzaCreated = json_object_get_int(json_object_object_get(js2, "id"));
+                idStanzaJoined = idStanzaCreated;
+            }
+                
+            if(strcmp(operation, "joinRoom") == 0)
+                idStanzaJoined = json_object_get_int(json_object_object_get(js, "idStanza"));
+            if(strcmp(operation, "startGame") == 0)
+                idStanzaStarted = json_object_get_int(json_object_object_get(js, "idStanzaStarting"));
+            printf("%d, %d\n", idStanzaJoined, idStanzaStarted);
+            while(!(idStanzaJoined == idStanzaStarted)){
+                printf("In while");
+                read(sock, buffer, 1024);
+                printf("%s\n", buffer);
+                memset(buffer, 0, sizeof buffer);
+            }
+        }else{
+            if ((valread = read(sock, buffer, 1024)) == 0) {
+                printf("Server disconnected.\n");
+            }
+            else {
+                printf("Reply from server: %s\n", buffer);
+            }
+            memset(buffer, 0, sizeof buffer);
+        }
+        /*----------------------------*/
+
+        /*if ((valread = read(sock, buffer, 1024)) == 0) {
+            if(op == 6) {
+                printf("Waiting for admin starting the game\n");
+                play(sock);
+            }
+            else if(op == 10) {
+                play(sock);
+            }
+            
+            if ((valread = read(sock, buffer, 1024)) == 0) {
+                printf("Server disconnected.\n");
+            }
+            else {
+                printf("Reply from server: %s\n", buffer);
+            }
+        }*/
+    }
     
     close(sock);
     

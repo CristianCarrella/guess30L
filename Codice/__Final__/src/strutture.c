@@ -55,7 +55,7 @@ int rm_stanza_by_id(int id){
 		if(stanze[id] != NULL){
 			success = true;
 			stanza *room = stanze[id];
-			
+
 			for (int i = 0; i < room->numeroMaxGiocatori; i++)
 			{
 				if(room->players[i] != NULL){
@@ -82,14 +82,16 @@ int add_user_in_room(utente *user, stanza *room){
 	if(user == NULL || room == NULL){
 		return false;
 	}
+	
+	rm_user_from_last_room(user);
+
 	int success = false;
 	//acquisizione
 	pthread_mutex_lock(&mutex);
 	int tmp = -1;
-	for (int i = 0; i < room->numeroMaxGiocatori; i++)
-	{
+	for (int i = 0; i < room->numeroMaxGiocatori; i++){
 		if(room->players[i] != NULL ){
-			if(room->players[i] == user){
+			if(room->players[i]->username == user->username){
 				success = true;
 				break;
 			}
@@ -97,15 +99,13 @@ int add_user_in_room(utente *user, stanza *room){
 			tmp = i;
 		}
 	}
-	if(tmp != -1){
+	if(tmp != -1 && !success){
 		user->idStanza = room->idStanza;
 		room->players[tmp] = user;
 		success = true;
 	}
 
-	// room = NULL;
 	pthread_mutex_unlock(&mutex);
-
 	return success;
 }
 
@@ -113,40 +113,51 @@ int add_user_in_room_by_id(utente *user, int id){
 	add_user_in_room(user,get_stanza_by_id(id));
 }
 
+bool isAdmin(utente *user, stanza *room){
+	return (room->adminUser->username == user->username);
+}
+
+int rm_user_from_room(utente *user, stanza *room ){
+	if(user == NULL){
+		return false;
+	}
+	return rm_user_from_room_by_username(user->username, room);
+}
 
 //rimuovi utente !!!!!CONDRONTA I PUNTATORI!!!!!
-int rm_user_from_room(utente *user, stanza *room ){
-	int success;
-	if(user == NULL || room == NULL){
-		printf("user o stanza NULL ");
-		if(user == NULL){
-			printf("user NULL ");
-		}
-		if(room == NULL){
-			printf("stanza NULL ");
-		}
-		success = false;
+int rm_user_from_room_by_username(char username[32], stanza *room ){
+	if(room == NULL){
+		return false;
 	}
+	bool success;
 	// strcmp non worka strcmp(room->adminUser->username,user->username)
-	printf("\nl admin è %s mentre l utente trovato è %s\n", room->adminUser->username, user->username);
-	if(room->adminUser == user){
+	if(room->adminUser->username == username){
 		success = rm_stanza(room);
-	}
-	else for (int i = 0; i < room->numeroMaxGiocatori; i++)
-	{
-		if(room->players[i] != NULL){
-			if(room->players[i] == user){
-				user->idStanza = -1;
-				room->players[i] = NULL;
-				success = true;
-				break;
+	} else {
+		for (int i = 0; i < room->numeroMaxGiocatori; i++){
+			if(room->players[i] != NULL){
+				if(room->players[i]->username == username){
+					room->players[i]->idStanza = -1;
+					room->players[i] = NULL;
+					success = true;
+					break;
+				}
 			}
 		}
 	}
-	return false;
+	return success;
+}
+
+void rm_user_from_last_room(utente *user){
+	if(user->idStanza != -1){
+		rm_user_from_room(user,get_stanza_by_id(user->idStanza));
+	}
 }
 
 int add_stanza(char *name, int max_player, utente *admin){
+
+	rm_user_from_last_room(admin);
+
 	int id = 0;
 	pthread_mutex_lock(&mutex);
 	//pthread_cond_wait(&condition, &mutex);
@@ -178,6 +189,19 @@ stanza* get_stanze(){
 	return stanze;
 }
 
+int get_number_of_player_in_stanza(int id){
+	stanza * actRoom = stanze[id];
+	int numPlayers = 0;
+	if(actRoom != NULL){
+		for(int i = 0; i<actRoom->numeroMaxGiocatori; i++){
+			if(actRoom->players[i] != NULL){
+				numPlayers++;
+			}
+		}
+	}
+	return numPlayers;
+}
+
 void visualizza_stanze(){
 	for (int i = 0; i < stanze_lenght; i++)
 	{
@@ -191,10 +215,40 @@ void visualizza_stanze(){
 			}
 		}
 	}
-	
 }
 
+utente* visualizza_stanza(int id){
 
+	if(id < stanze_lenght && stanze[id] != NULL){
+		int n = stanze[id]->numeroMaxGiocatori;
+		utente * tmp[n];
+		int last = 0;
+		for(int j = 0; j < stanze[id]->numeroMaxGiocatori; j++){
+			if(stanze[id]->players[j] != NULL){
+					tmp[last] = stanze[id]->players[j];
+					last++;
+			}
+		}
+		return *tmp;
+	}
+	return NULL;
+}
+
+void delete_utente_from_connected_room(utente * user){
+	for (int i = 0; i < stanze_lenght; i++)
+	{
+		if(stanze[i] != NULL){
+			for (int j = 0; j < stanze[i]->numeroMaxGiocatori; j++)
+			{
+				if(stanze[i]->players[j] != NULL){
+					if(stanze[i]->players[j]->username == user->username){
+						rm_user_from_room_by_username(user->username, stanze[i]);
+					}
+				}
+			}
+		}
+	}
+}
 
 #endif
 
