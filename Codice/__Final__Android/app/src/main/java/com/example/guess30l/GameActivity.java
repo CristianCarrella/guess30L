@@ -1,0 +1,31 @@
+package com.example.guess30l;
+
+import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.io.IOException;
+
+public class GameActivity extends AppCompatActivity {
+
+    String buffer;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        try {
+            buffer = ServerRequester.readSocket(MainActivity.serverRequester.socket);
+            System.out.println(buffer);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        if(buffer.equals("WAIT")) {
+            //setContentView();
+        }
+        else if(buffer.equals("CHOOSE")){
+            //setContentView();
+        }
+
+
+    }
+}

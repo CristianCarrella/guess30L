@@ -45,19 +45,6 @@ public class ServerRequester {
         });
     }
 
-
-
-//    public String joinRoom(int idRoom) {
-//        Future<String> future = executors.submit(new JoinCallable(idRoom, socket));
-//        try {
-//            JSONObject jsonString = new JSONObject(future.get());
-//            return jsonString.getBoolean("isSuccess");
-//        } catch (ExecutionException | InterruptedException | JSONException e) {
-//            e.printStackTrace();
-//        }
-//        return false;
-//    }
-
     public boolean joinRoom(int idRoom) {
         Future<String> future = executors.submit(new JoinCallable(idRoom, socket));
         try {
@@ -82,7 +69,7 @@ public class ServerRequester {
         public String call() throws Exception {
             JSONObject obj = new JSONObject();
             StringBuilder text = new StringBuilder();
-            ArrayList<String> usernames = new ArrayList<String>();
+//            ArrayList<String> usernames = new ArrayList<String>();
             try {
                 obj.put("operation", "joinRoom");
                 obj.put("idStanza", idRoom);
@@ -148,9 +135,14 @@ public class ServerRequester {
             }
         }
     }
+
+    /**
+     * AGGIUNGERE RCV DAL SERVER
+     * @return
+     */
+
     public void updateLobbyRequestScheduled(LobbyActivity lobbyActivity) {
         t =scheduleTaskExecutor.scheduleAtFixedRate( new LobbyRequestScheduledCallable(socket, lobbyActivity), 0,5, TimeUnit.SECONDS);
-
     }
 
     public Integer updateLobbyRequest(LobbyActivity lobbyActivity) {
