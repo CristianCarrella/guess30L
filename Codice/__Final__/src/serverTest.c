@@ -160,7 +160,6 @@ void *handle2_client(void *par_) {
             sendResponse(json, socket);
         }
         else if(strcmp(operation, "quitRoom") == 0){
-            printf("%s", stanzaAttuale->adminUser->username);
             bool result = rm_user_from_room(utenteLoggato, stanzaAttuale);
             json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
             sendResponse(json, socket);

@@ -127,7 +127,7 @@ int rm_user_from_room(utente *user, stanza *room ){
 //rimuovi utente !!!!!CONFRONTA I PUNTATORI!!!!!
 int rm_user_from_room_by_username(char username[32], stanza *room ){
 	if(room == NULL){
-		return false;
+		return true;
 	}
 	bool success;
 	// strcmp non worka strcmp(room->adminUser->username,user->username)
