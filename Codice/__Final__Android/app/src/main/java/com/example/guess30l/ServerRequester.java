@@ -43,62 +43,62 @@ public class ServerRequester {
         });
     }
 
-    public ArrayList<String> waitUntilGameStarts(TextView partecipanti, LobbyActivity lobbyActivity) {
-        ArrayList<String> usernames = new ArrayList<String>();
-        executors.execute(() -> {
-            while (!gameIsStartedOrQuit) {
-                Log.v("prova", "In reading in waitUntil");
-                readUserInLobbyFromSocket(usernames, socket);
-                if(usernames.contains("EXIT")){ //se è uscito l'admin
-                    gameIsStartedOrQuit = true;
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    lobbyActivity.runOnUiThread(new Runnable() {
-                        public void run() {
-                            Intent myIntent = new Intent(lobbyActivity, HomeActivity.class);
-                            lobbyActivity.startActivity(myIntent);
-                        }
-                    });
-                }else{
-                    StringBuilder text = new StringBuilder();
-                    for(String username : usernames)
-                        text.append(username).append("\n");
-                    partecipanti.post(new Runnable(){
-                        @Override
-                        public void run() {
-                            partecipanti.setText(text.toString());
-                        }
-                    });
-                }
-                usernames.clear();
-            }
-        });
-        return usernames;
+//    public ArrayList<String> waitUntilGameStarts(TextView partecipanti, LobbyActivity lobbyActivity) {
+//        ArrayList<String> usernames = new ArrayList<String>();
+//        executors.execute(() -> {
+//            while (!gameIsStartedOrQuit) {
+//                Log.v("prova", "In reading in waitUntil");
+//                readUserInLobbyFromSocket(usernames, socket);
+//                if(usernames.contains("EXIT")){ //se è uscito l'admin
+//                    gameIsStartedOrQuit = true;
+//                    try {
+//                        Thread.sleep(100);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                    lobbyActivity.runOnUiThread(new Runnable() {
+//                        public void run() {
+//                            Intent myIntent = new Intent(lobbyActivity, HomeActivity.class);
+//                            lobbyActivity.startActivity(myIntent);
+//                        }
+//                    });
+//                }else{
+//                    StringBuilder text = new StringBuilder();
+//                    for(String username : usernames)
+//                        text.append(username).append("\n");
+//                    partecipanti.post(new Runnable(){
+//                        @Override
+//                        public void run() {
+//                            partecipanti.setText(text.toString());
+//                        }
+//                    });
+//                }
+//                usernames.clear();
+//            }
+//        });
+//        return usernames;
+//    }
+
+    public boolean joinRoom(int idRoom) {
+        Future<String> future = executors.submit(new JoinCallable(idRoom, socket));
+        try {
+            JSONObject jsonString = new JSONObject(future.get());
+            return jsonString.getBoolean("isSuccess");
+        } catch (ExecutionException | InterruptedException | JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 //    public String joinRoom(int idRoom) {
 //        Future<String> future = executors.submit(new JoinCallable(idRoom, socket));
 //        try {
-//            JSONObject jsonString = new JSONObject(future.get());
-//            return jsonString.getBoolean("isSuccess");
-//        } catch (ExecutionException | InterruptedException | JSONException e) {
+//            return future.get();
+//        } catch (ExecutionException | InterruptedException e) {
 //            e.printStackTrace();
 //        }
-//        return false;
+//        return null;
 //    }
-
-    public String joinRoom(int idRoom) {
-        Future<String> future = executors.submit(new JoinCallable(idRoom, socket));
-        try {
-            return future.get();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     private static class JoinCallable implements Callable<String> {
         Integer idRoom;
@@ -113,7 +113,7 @@ public class ServerRequester {
         public String call() throws Exception {
             JSONObject obj = new JSONObject();
             StringBuilder text = new StringBuilder();
-            ArrayList<String> usernames = new ArrayList<String>();
+//            ArrayList<String> usernames = new ArrayList<String>();
             try {
                 obj.put("operation", "joinRoom");
                 obj.put("idStanza", idRoom);
@@ -121,13 +121,15 @@ public class ServerRequester {
                 PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
                 printWriter.print(obj);
                 printWriter.flush();
-                Log.v("prova", "In reading in join");
-                readUserInLobbyFromSocket(usernames, socket);
 
-                for(String username : usernames)
-                    text.append(username).append("\n");
-
-                return text.toString();
+                return readSocket(socket);
+//                Log.v("prova", "In reading in join");
+//                readUserInLobbyFromSocket(usernames, socket);
+//
+//                for(String username : usernames)
+//                    text.append(username).append("\n");
+//
+//                return text.toString();
 
             } catch (JSONException | IOException e) {
                 e.printStackTrace();
@@ -156,9 +158,10 @@ public class ServerRequester {
     }
 
     /**
-     * METODO DA SISTEMARE DEVE RITORNARE BOLEAN E DEVE RICEVERE DAL SOCKET ALTRIMENTI BLOCCA TUTTO
+     * AGGIUNGERE RCV DAL SERVER
+     * @return
      */
-    public void quitRoom() {
+    public boolean quitRoom() {
         executors.execute(()->{
             JSONObject obj = new JSONObject();
             try {
@@ -171,6 +174,7 @@ public class ServerRequester {
                 e.printStackTrace();
             }
         });
+        return true;
     }
 
     public boolean loginRequest(String email, String password) {

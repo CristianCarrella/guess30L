@@ -100,12 +100,12 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void goToTmpLobbyActivity() {
-        String partecipanti = MainActivity.serverRequester.joinRoom(0);
-        ServerRequester.gameIsStartedOrQuit = false;
-        Log.v("prova", "partecipanti: " + partecipanti);
-        Intent myIntent = new Intent(HomeActivity.this, LobbyActivity.class);
-        myIntent.putExtra("partecipantiIniziali", partecipanti);
-        HomeActivity.this.startActivity(myIntent);
+//        String partecipanti = MainActivity.serverRequester.joinRoom(0);
+//        ServerRequester.gameIsStartedOrQuit = false;
+//        Log.v("prova", "partecipanti: " + partecipanti);
+//        Intent myIntent = new Intent(HomeActivity.this, LobbyActivity.class);
+//        myIntent.putExtra("partecipantiIniziali", partecipanti);
+//        HomeActivity.this.startActivity(myIntent);
     }
 
 }
