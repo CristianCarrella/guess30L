@@ -5,21 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1f6b9f04-e096-4dc5-939b-0c7d912819a1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/layout/activity_wating_room.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Codice/__Final__/src/clientTest.c" beforeDir="false" afterPath="$PROJECT_DIR$/Codice/__Final__/src/clientTest.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Codice/__Final__/src/gamemanager.c" beforeDir="false" afterPath="$PROJECT_DIR$/Codice/__Final__/src/gamemanager.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__/.vs/slnx.sqlite" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__/src/main.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/java/com/example/guess30l/GameActivity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/container/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Codice/__Final__/src/serverTest.c" beforeDir="false" afterPath="$PROJECT_DIR$/Codice/__Final__/src/serverTest.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Codice/__Final__/src/strutture.c" beforeDir="false" afterPath="$PROJECT_DIR$/Codice/__Final__/src/strutture.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Codice/__Final__/src/word.c" beforeDir="false" afterPath="$PROJECT_DIR$/Codice/__Final__/src/word.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Codice/__Final__Android/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Codice/__Final__Android/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Codice/__Final__Android/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Codice/__Final__Android/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/java/com/example/guess30l/CreateRoomActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/java/com/example/guess30l/CreateRoomActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Codice/__Final__Android/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Codice/__Final__Android/.idea/deploymentTargetDropDown.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/java/com/example/guess30l/HomeActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/java/com/example/guess30l/HomeActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/java/com/example/guess30l/JoinRoomActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/java/com/example/guess30l/JoinRoomActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/java/com/example/guess30l/LobbyActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/java/com/example/guess30l/LobbyActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/java/com/example/guess30l/ServerRequester.java" beforeDir="false" afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/java/com/example/guess30l/ServerRequester.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/layout/activity_create_room.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Codice/__Final__Android/app/src/main/res/layout/activity_create_room.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/container/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/container/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/todo" beforeDir="false" afterPath="$PROJECT_DIR$/todo" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,12 +32,12 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
