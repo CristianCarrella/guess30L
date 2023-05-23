@@ -155,9 +155,9 @@ void *handle2_client(void *par_) {
             }
 
             ////////////////////////////////
-            // signal(SIGUSR1, thread_unlock);
-            // pause();
-            // printf("tread unlocked for %s\n", utenteLoggato->username);
+            signal(SIGUSR1, thread_unlock);
+            pause();
+            printf("tread unlocked for %s\n", utenteLoggato->username);
             ////////////////////////////////
         }
         else if(strcmp(operation, "searchRoom") == 0){
@@ -222,13 +222,15 @@ void *handle2_client(void *par_) {
             char winnerEmail[64];
             char* email;
             int result = 1;
+            json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
+            sendResponse(json, socket);
+            //Svolgimento del gioco
             email = start_room(get_stanza_by_id(utenteLoggato->idStanza), 2);
+            //Fine del gioco
             rm_stanza_by_id(utenteLoggato->idStanza);
             strcpy(winnerEmail, email);
             updateUserPartiteVinte(conn, winnerEmail);
 
-            json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
-            sendResponse(json, socket);
         }
 
         //free(json);
