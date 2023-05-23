@@ -17,7 +17,6 @@ char* start_room(stanza* currentRoom, int targetScore) {
         if(currentRoom->players[i] != NULL)
             printf("%s\n", currentRoom->players[i]->username);
     }
-    currentRoom->started = true;
 
     //Set connection time-out per le socket
     for(i = 0; i < currentRoom->numeroMaxGiocatori; i++) {

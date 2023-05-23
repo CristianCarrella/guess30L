@@ -35,6 +35,7 @@ public class LobbyActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(MainActivity.serverRequester.quitRoom()){
+                    ServerRequester.t.cancel(true);
                     goToHomeActivity();
                 }else{
                     //visualizza uscita non riuscita

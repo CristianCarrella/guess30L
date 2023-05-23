@@ -121,12 +121,6 @@ void *handle2_client(void *par_) {
             stanzaAttuale = stanza;
             json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
             sendResponse(json, socket);
-
-            ////////////////////////////////
-            //signal(SIGUSR1, thread_unlock);
-            //pause();
-            //printf("tread unlocked for %s\n", utenteLoggato->username);
-            ////////////////////////////////
         }
         else if(strcmp(operation, "searchRoom") == 0){
             // stanza * stanzeTmp[50];
@@ -169,19 +163,21 @@ void *handle2_client(void *par_) {
         else if(strcmp(operation, "startGame") == 0){
             char winnerEmail[64];
             char* email;
-            int result = 1;
+            bool result = false;
+            stanza *currentRoom = get_stanza_by_id(utenteLoggato->idStanza);
+            if(currentRoom != NULL) {
+                currentRoom->started = true;
+                result = true;
+            }
             json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
             sendResponse(json, socket);
             //Svolgimento del gioco
-            email = start_room(get_stanza_by_id(utenteLoggato->idStanza), 2);
+            if(result)
+                email = start_room(get_stanza_by_id(utenteLoggato->idStanza), 2);
             //Fine del gioco
             rm_stanza_by_id(utenteLoggato->idStanza);
             strcpy(winnerEmail, email);
             updateUserPartiteVinte(conn, winnerEmail);
-
-            json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
-            sendResponse(json, socket);
-
         }
         else if(strcmp(operation, "updateLobby") == 0){
             struct json_object * jsonArray = json_object_new_array();
@@ -202,11 +198,16 @@ void *handle2_client(void *par_) {
                 json_object_object_add(json, "isAdminExited", json_object_new_boolean(isAdminExited));
             }else{
                 json_object_object_add(json, "usersInLobby", jsonArray);
-                json_object_object_add(json, "isGameStarted", json_object_new_boolean(false)); //temporaneo, non so come capire se il gioco è iniziato
+                json_object_object_add(json, "isGameStarted", json_object_new_boolean(stanzaAttuale->started)); //temporaneo, non so come capire se il gioco è iniziato
             }
 
             sendResponse(json, socket);
             //{isAdminExited: true} oppure { usersInLobby[{username: user1}, {username: user2}...], isGameStarted: true/false }
+            if(stanzaAttuale->started) {
+                signal(SIGUSR1, thread_unlock);
+                pause();
+                printf("tread unlocked for %s\n", utenteLoggato->username);
+            }
         }
 
         //free(json);
