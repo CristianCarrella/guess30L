@@ -22,24 +22,21 @@ public class LobbyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_lobby);
 
         Button exit = findViewById(R.id.exitButton);
-        TextView partecipanti = findViewById(R.id.partecipanti);
-        partecipanti.setText(getIntent().getStringExtra("partecipantiIniziali"));
-        MainActivity.serverRequester.waitUntilGameStarts(partecipanti, this);
+//        TextView partecipanti = findViewById(R.id.partecipanti);
+//        partecipanti.setText(getIntent().getStringExtra("partecipantiIniziali"));
+//        MainActivity.serverRequester.waitUntilGameStarts(partecipanti, this);
 
         View.OnClickListener exitListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ServerRequester.gameIsStartedOrQuit = true;
+//                ServerRequester.gameIsStartedOrQuit = true;
                 MainActivity.serverRequester.quitRoom();
-                Intent myIntent = new Intent(LobbyActivity.this, HomeActivity.class);
-                LobbyActivity.this.startActivity(myIntent);
+//                Intent myIntent = new Intent(LobbyActivity.this, HomeActivity.class);
+//                LobbyActivity.this.startActivity(myIntent);
             }
         };
 
         exit.setOnClickListener(exitListener);
-
-
-
     }
 
 }

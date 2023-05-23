@@ -23,6 +23,8 @@ public class JoinRoomActivity extends AppCompatActivity {
     int lastClicked = -1;
     Stanza[] stanzeArr;
 
+    int x = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +52,7 @@ public class JoinRoomActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 JoinRoom();
-                goToLobbyActivity();
+
             }
         };
 
@@ -66,6 +68,7 @@ public class JoinRoomActivity extends AppCompatActivity {
         View.OnClickListener reloadListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                x = x+1;
                 Toast.makeText(v.getContext(), "Reload in corso", Toast.LENGTH_SHORT).show();
                 updateRooms();
             }
@@ -84,13 +87,18 @@ public class JoinRoomActivity extends AppCompatActivity {
 
     @Override
     protected void onResume(){
+//        Toast.makeText(JoinRoomActivity.this, x, Toast.LENGTH_SHORT).show();
         super.onResume();
         updateRooms();
         SetJoinCliccable(false);
     }
 
     private void JoinRoom() {
-        MainActivity.serverRequester.joinRoom(stanzeArr[lastClicked].getId());
+        if(MainActivity.serverRequester.joinRoom(stanzeArr[lastClicked].getId())){
+            goToLobbyActivity();
+        }else{
+            updateRooms();
+        }
     }
 
     private void goToHomeActivity() {
