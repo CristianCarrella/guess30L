@@ -1,9 +1,6 @@
 package com.example.guess30l;
 
-import android.content.Intent;
-import android.os.Debug;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.example.guess30l.models.LoggedUser;
 import com.example.guess30l.models.Stanza;
@@ -24,10 +21,15 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class ServerRequester {
     private final int PORT = 5000;
-    public static ExecutorService executors =  Executors.newFixedThreadPool(100);
+    private ExecutorService executors =  Executors.newFixedThreadPool(100);
+    private ScheduledExecutorService scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
+    static ScheduledFuture<?> t;
     public static boolean gameIsStartedOrQuit = false;
     Socket socket;
 
@@ -43,41 +45,7 @@ public class ServerRequester {
         });
     }
 
-    public ArrayList<String> waitUntilGameStarts(TextView partecipanti, LobbyActivity lobbyActivity) {
-        ArrayList<String> usernames = new ArrayList<String>();
-        executors.execute(() -> {
-            while (!gameIsStartedOrQuit) {
-                Log.v("prova", "In reading in waitUntil");
-                readUserInLobbyFromSocket(usernames, socket);
-                if(usernames.contains("EXIT")){ //se è uscito l'admin
-                    gameIsStartedOrQuit = true;
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    lobbyActivity.runOnUiThread(new Runnable() {
-                        public void run() {
-                            Intent myIntent = new Intent(lobbyActivity, HomeActivity.class);
-                            lobbyActivity.startActivity(myIntent);
-                        }
-                    });
-                }else{
-                    StringBuilder text = new StringBuilder();
-                    for(String username : usernames)
-                        text.append(username).append("\n");
-                    partecipanti.post(new Runnable(){
-                        @Override
-                        public void run() {
-                            partecipanti.setText(text.toString());
-                        }
-                    });
-                }
-                usernames.clear();
-            }
-        });
-        return usernames;
-    }
+
 
 //    public String joinRoom(int idRoom) {
 //        Future<String> future = executors.submit(new JoinCallable(idRoom, socket));
@@ -90,14 +58,15 @@ public class ServerRequester {
 //        return false;
 //    }
 
-    public String joinRoom(int idRoom) {
+    public boolean joinRoom(int idRoom) {
         Future<String> future = executors.submit(new JoinCallable(idRoom, socket));
         try {
-            return future.get();
-        } catch (ExecutionException | InterruptedException e) {
+            JSONObject jsonObject = new JSONObject(future.get());
+            return jsonObject.getBoolean("isSuccess");
+        } catch (ExecutionException | InterruptedException | JSONException e) {
             e.printStackTrace();
         }
-        return null;
+        return false;
     }
 
     private static class JoinCallable implements Callable<String> {
@@ -121,13 +90,8 @@ public class ServerRequester {
                 PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
                 printWriter.print(obj);
                 printWriter.flush();
-                Log.v("prova", "In reading in join");
-                readUserInLobbyFromSocket(usernames, socket);
 
-                for(String username : usernames)
-                    text.append(username).append("\n");
-
-                return text.toString();
+                return readSocket(socket);
 
             } catch (JSONException | IOException e) {
                 e.printStackTrace();
@@ -136,41 +100,146 @@ public class ServerRequester {
         }
     }
 
-    private static void readUserInLobbyFromSocket(ArrayList<String> usernames, Socket socket) {
-        try {
-            String jsonUsersInRoom = readSocket(socket);
-            if(jsonUsersInRoom.contains("adminExited")){ //se è uscito l'admin
-                usernames.add("EXIT");
-            }else{
-                JSONArray jsonArray = new JSONArray(jsonUsersInRoom);
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject json = jsonArray.getJSONObject(i);
-                    String username = json.getString("username");
-                    usernames.add(username);
-                }
-            }
-
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * METODO DA SISTEMARE DEVE RITORNARE BOLEAN E DEVE RICEVERE DAL SOCKET ALTRIMENTI BLOCCA TUTTO
+    /*
+        ritorna 0 se è stata solo aggiornata la lobby
+        ritorna 1 se l'admin è uscito
+        ritorna 2 se la partita è iniziata
+        ritorna -1 in caso di errore
      */
-    public void quitRoom() {
-        executors.execute(()->{
+
+
+    static class LobbyRequestScheduledCallable implements Runnable {
+        Socket socket;
+        LobbyActivity lobbyActivity;
+
+        LobbyRequestScheduledCallable(Socket socket, LobbyActivity lobbyActivity){
+            this.socket = socket;
+            this.lobbyActivity = lobbyActivity;
+        }
+
+        public void run() {
             JSONObject obj = new JSONObject();
             try {
-                obj.put("operation", "quitRoom");
-                Log.v("prova", obj.toString());
+                Log.v("prova", "executed");
+                obj.put("operation", "updateLobby");
+
                 PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
                 printWriter.print(obj);
                 printWriter.flush();
+
+                String js = readSocket(socket);
+                if(js.contains("isAdminExited")){
+                    lobbyActivity.goToHomeActivity();
+                    t.cancel(true);
+                } else {
+                    JSONObject jsonObject = new JSONObject(js);
+                    JSONArray jsonArray = jsonObject.getJSONArray("usersInLobby");
+                    ArrayList<String> usernames = new ArrayList<>();
+                    for(int i = 0; i < jsonArray.length(); i++){
+                        usernames.add(jsonArray.getJSONObject(i).getString("username"));
+                    }
+                    lobbyActivity.runOnUiThread(()->{
+                        lobbyActivity.setPartecipanti(usernames);
+                    });
+                }
+
             } catch (JSONException | IOException e) {
                 e.printStackTrace();
             }
-        });
+        }
+    }
+    public void updateLobbyRequestScheduled(LobbyActivity lobbyActivity) {
+        t =scheduleTaskExecutor.scheduleAtFixedRate( new LobbyRequestScheduledCallable(socket, lobbyActivity), 0,5, TimeUnit.SECONDS);
+
+    }
+
+    public Integer updateLobbyRequest(LobbyActivity lobbyActivity) {
+        Future<String> future = executors.submit(new UpdateLobbyCallable(socket));
+        try {
+            String js = future.get();
+            if(js.contains("isAdminExited")){
+                return 1;
+            } else {
+                JSONObject jsonObject = new JSONObject(js);
+                JSONArray jsonArray = jsonObject.getJSONArray("usersInLobby");
+                ArrayList<String> usernames = new ArrayList<>();
+                for(int i = 0; i < jsonArray.length(); i++){
+                    usernames.add(jsonArray.getJSONObject(i).getString("username"));
+                }
+                lobbyActivity.runOnUiThread(()->{
+                    lobbyActivity.setPartecipanti(usernames);
+                });
+                return 0;
+            }
+
+        } catch (ExecutionException | InterruptedException | JSONException e) {
+            return -1;
+        }
+    }
+
+    private static class UpdateLobbyCallable implements Callable<String> {
+        Socket socket;
+
+        public UpdateLobbyCallable(Socket socket) {
+            this.socket = socket;
+        }
+
+        @Override
+        public String call() throws Exception {
+            JSONObject obj = new JSONObject();
+            try {
+                Log.v("prova", "executed");
+                obj.put("operation", "updateLobby");
+
+                PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
+                printWriter.print(obj);
+                printWriter.flush();
+
+                return readSocket(socket);
+
+            } catch (JSONException | IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+
+    public boolean quitRoom() {
+        Future<String> future = executors.submit(new QuitCallable(socket));
+        try {
+            JSONObject json = new JSONObject(future.get());
+            return json.getBoolean("isSuccess");
+        } catch (ExecutionException | InterruptedException | JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private static class QuitCallable implements Callable<String> {
+        Socket socket;
+
+        public QuitCallable(Socket socket) {
+            this.socket = socket;
+        }
+
+        @Override
+        public String call() throws Exception {
+            JSONObject obj = new JSONObject();
+            try {
+                obj.put("operation", "quitRoom");
+
+                PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
+                printWriter.print(obj);
+                printWriter.flush();
+
+                return readSocket(socket);
+
+            } catch (JSONException | IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 
     public boolean loginRequest(String email, String password) {
@@ -405,7 +474,6 @@ public class ServerRequester {
                 printWriter.flush();
                 String res = readSocket(socket);
                 res = res.replace("\\","");
-                d("prova", res);
                 return res;
 
             } catch (IOException | JSONException e) {
@@ -511,3 +579,4 @@ public class ServerRequester {
         return sb.toString();
     }
 }
+

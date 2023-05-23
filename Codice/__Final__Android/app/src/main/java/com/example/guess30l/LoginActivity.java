@@ -46,7 +46,9 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 EditText email = findViewById(R.id.emailField);
+                email.setText("prova@example.com");
                 EditText password = findViewById(R.id.passwordField);
+                password.setText("prova");
                 if (isValidEmail(email.getText())) {
                     String psw = password.getText().toString();
                     String eml = email.getText().toString();
@@ -90,7 +92,6 @@ public class LoginActivity extends AppCompatActivity {
     private void goToHomeActivity(){
         Intent myIntent = new Intent(LoginActivity.this, HomeActivity.class);
         LoginActivity.this.startActivity(myIntent);
-        Log.i("prova", LoginActivity.loggedUser.getUsername());
         finish();
     }
 

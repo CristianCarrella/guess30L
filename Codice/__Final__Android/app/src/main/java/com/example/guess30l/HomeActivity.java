@@ -75,15 +75,7 @@ public class HomeActivity extends AppCompatActivity {
         victoriesProfile.setText("Partite vinte: " + LoginActivity.loggedUser.getPartiteVinte().toString());
 
     }
-    public static void d(String TAG, String message) {
-        int maxLogSize = 2000;
-        for(int i = 0; i <= message.length() / maxLogSize; i++) {
-            int start = i * maxLogSize;
-            int end = (i+1) * maxLogSize;
-            end = end > message.length() ? message.length() : end;
-            android.util.Log.i(TAG, message.substring(start, end));
-        }
-    }
+
     private void goToCreateRoomActivity() {
         Intent myIntent = new Intent(HomeActivity.this, CreateRoomActivity.class);
         HomeActivity.this.startActivity(myIntent);
@@ -96,15 +88,6 @@ public class HomeActivity extends AppCompatActivity {
 
     private void goToChangeAvatarActivity() {
         Intent myIntent = new Intent(HomeActivity.this, ChangeAvatarActivity.class);
-        HomeActivity.this.startActivity(myIntent);
-    }
-
-    private void goToTmpLobbyActivity() {
-        String partecipanti = MainActivity.serverRequester.joinRoom(0);
-        ServerRequester.gameIsStartedOrQuit = false;
-        Log.v("prova", "partecipanti: " + partecipanti);
-        Intent myIntent = new Intent(HomeActivity.this, LobbyActivity.class);
-        myIntent.putExtra("partecipantiIniziali", partecipanti);
         HomeActivity.this.startActivity(myIntent);
     }
 

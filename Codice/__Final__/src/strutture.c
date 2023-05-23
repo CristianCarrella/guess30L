@@ -124,7 +124,7 @@ int rm_user_from_room(utente *user, stanza *room ){
 	return rm_user_from_room_by_username(user->username, room);
 }
 
-//rimuovi utente !!!!!CONDRONTA I PUNTATORI!!!!!
+//rimuovi utente !!!!!CONFRONTA I PUNTATORI!!!!!
 int rm_user_from_room_by_username(char username[32], stanza *room ){
 	if(room == NULL){
 		return false;
