@@ -19,12 +19,6 @@ public class GameActivity extends AppCompatActivity {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        if(buffer.equals("WAIT")) {
-            //setContentView();
-        }
-        else if(buffer.equals("CHOOSE")){
-            //setContentView();
-        }
 
 
     }

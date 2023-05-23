@@ -18,18 +18,33 @@ import java.util.concurrent.Executors;
 public class LobbyActivity extends AppCompatActivity {
     TextView partecipanti;
     Button exit;
+    Button start;
+
+    Boolean started;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lobby);
         exit = findViewById(R.id.exitButton);
+        start = findViewById(R.id.startButton);
         partecipanti = findViewById(R.id.partecipanti);
 
         //if admin is exited
         /*if(MainActivity.serverRequester.updateLobbyRequest(this) == 1){
             goToHomeActivity();
         }*/
+        View.OnClickListener startListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(MainActivity.serverRequester.startGame()){
+                    ServerRequester.t.cancel(true);
+                    goToGameActivity();
+                }
+            }
+        };
+        start.setOnClickListener(startListener);
+
 
         View.OnClickListener exitListener = new View.OnClickListener() {
             @Override
@@ -66,4 +81,12 @@ public class LobbyActivity extends AppCompatActivity {
         LobbyActivity.this.startActivity(myIntent);
     }
 
+    public void goToGameActivity() {
+        Intent myIntent = new Intent(LobbyActivity.this, GameActivity.class);
+        LobbyActivity.this.startActivity(myIntent);
+    }
+
+    public void setStarted(Boolean started) {
+        this.started = started;
+    }
 }
