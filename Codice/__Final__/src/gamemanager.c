@@ -17,7 +17,6 @@ char* start_room(stanza* currentRoom, int targetScore) {
         if(currentRoom->players[i] != NULL)
             printf("%s\n", currentRoom->players[i]->username);
     }
-    currentRoom->started = true;
 
     //Set connection time-out per le socket
     for(i = 0; i < currentRoom->numeroMaxGiocatori; i++) {
@@ -35,7 +34,8 @@ char* start_room(stanza* currentRoom, int targetScore) {
         if(currentRoom->players[i] == NULL){
             i = ++i % currentRoom->numeroMaxGiocatori;
             continue;
-        }  
+            //forse sbagliato?
+        }
         sendBroadcast(currentRoom, i, "WAIT");
         send(currentRoom->players[i]->clientSocket, "CHOOSE", 7, 0);
         recv(currentRoom->players[i]->clientSocket, response, BUFFDIM, 0);

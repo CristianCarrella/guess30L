@@ -38,7 +38,7 @@ public class ServerRequester {
         executors.execute(() -> {
             try{
                 socket = new Socket("10.0.2.2", PORT);
-                socket.setSoTimeout(100000000);
+//                socket.setSoTimeout(100000000);
             }catch(IOException e){
                 e.printStackTrace();
             }
@@ -120,6 +120,12 @@ public class ServerRequester {
                     t.cancel(true);
                 } else {
                     JSONObject jsonObject = new JSONObject(js);
+
+                    if(jsonObject.getBoolean("isGameStarted")) {
+                        lobbyActivity.goToGameActivity();
+                        t.cancel(true);
+                    }
+
                     JSONArray jsonArray = jsonObject.getJSONArray("usersInLobby");
                     ArrayList<String> usernames = new ArrayList<>();
                     for(int i = 0; i < jsonArray.length(); i++){
@@ -135,11 +141,6 @@ public class ServerRequester {
             }
         }
     }
-
-    /**
-     * AGGIUNGERE RCV DAL SERVER
-     * @return
-     */
 
     public void updateLobbyRequestScheduled(LobbyActivity lobbyActivity) {
         t =scheduleTaskExecutor.scheduleAtFixedRate( new LobbyRequestScheduledCallable(socket, lobbyActivity), 0,5, TimeUnit.SECONDS);
@@ -313,7 +314,43 @@ public class ServerRequester {
         }
     }
 
+    public boolean startGame() {
+        Future<String> future = executors.submit(new StartGameCallable(socket));
+        try {
+            JSONObject jsonString = new JSONObject(future.get());
+            return jsonString.getBoolean("isSuccess");
+        } catch (ExecutionException | InterruptedException | JSONException e) {
+            return false;
+        }
+    }
 
+
+    private static class StartGameCallable implements Callable<String> {
+        Socket socket;
+
+        public StartGameCallable(Socket sock) {
+            socket = sock;
+        }
+
+        @Override
+        public String call() throws Exception {
+            try{
+                JSONObject obj = new JSONObject();
+                obj.put("operation", "startGame");
+
+                PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
+                printWriter.print(obj);
+                printWriter.flush();
+
+                return readSocket(socket);
+
+            }catch(IOException | JSONException e){
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+    }
 
     private static class SignUpCallable implements Callable<String> {
         String email, password, username;

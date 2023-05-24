@@ -21,6 +21,7 @@ utente *new_utente(char *name, char *pass, char *em, int wongames, int socket, i
 	nuovo->clientSocket = socket;
 	nuovo->imgId = imgid;
 	nuovo->tid = tid;
+	nuovo->isReady = false;
 	return nuovo;
 }
 
@@ -40,6 +41,7 @@ stanza *new_stanza(int id, char* nome, int maxPlayer, utente *admin)
 		nuovo->players[i] = NULL;
 	}
 	nuovo->players[0] = admin;
+	pthread_mutex_init(&nuovo->roomMutex, NULL);
 	return nuovo;
 }
 
@@ -55,6 +57,7 @@ int rm_stanza_by_id(int id){
 		if(stanze[id] != NULL){
 			success = true;
 			stanza *room = stanze[id];
+			pthread_mutex_destroy(&room->roomMutex);
 
 			for (int i = 0; i < room->numeroMaxGiocatori; i++)
 			{
@@ -110,6 +113,7 @@ int add_user_in_room(utente *user, stanza *room){
 }
 
 int add_user_in_room_by_id(utente *user, int id){
+	delete_utente_from_connected_room(user);
 	add_user_in_room(user,get_stanza_by_id(id));
 }
 
@@ -127,9 +131,9 @@ int rm_user_from_room(utente *user, stanza *room ){
 //rimuovi utente !!!!!CONFRONTA I PUNTATORI!!!!!
 int rm_user_from_room_by_username(char username[32], stanza *room ){
 	if(room == NULL){
-		return false;
+		return true;
 	}
-	bool success;
+	bool success = false;
 	// strcmp non worka strcmp(room->adminUser->username,user->username)
 	if(room->adminUser->username == username){
 		success = rm_stanza(room);
@@ -218,7 +222,6 @@ void visualizza_stanze(){
 }
 
 utente* visualizza_stanza(int id){
-
 	if(id < stanze_lenght && stanze[id] != NULL){
 		int n = stanze[id]->numeroMaxGiocatori;
 		utente * tmp[n];
@@ -248,6 +251,25 @@ void delete_utente_from_connected_room(utente * user){
 			}
 		}
 	}
+}
+
+void wait_until_ready(stanza * room, utente * user){
+	user->isReady = true;
+	bool canNext = true;
+	for(int i = 0; i < room->numeroMaxGiocatori; i++){
+		if(room->players[i] != NULL){
+			if(room->players[i]->isReady == false){
+				canNext = false;
+			}
+		}
+	}
+	if (canNext == true)
+	{
+		pthread_mutex_unlock(&room->roomMutex);
+	}else if(!room->started){
+		pthread_mutex_trylock(&room->roomMutex);
+	}
+	
 }
 
 #endif
