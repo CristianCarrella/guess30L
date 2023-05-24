@@ -38,7 +38,7 @@ public class ServerRequester {
         executors.execute(() -> {
             try{
                 socket = new Socket("10.0.2.2", PORT);
-                socket.setSoTimeout(100000000);
+//                socket.setSoTimeout(100000000);
             }catch(IOException e){
                 e.printStackTrace();
             }

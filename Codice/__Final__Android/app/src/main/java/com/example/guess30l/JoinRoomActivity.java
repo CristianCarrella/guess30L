@@ -1,6 +1,7 @@
 package com.example.guess30l;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,9 +23,7 @@ public class JoinRoomActivity extends AppCompatActivity {
     Button reloadBttn;
     int lastClicked = -1;
     Stanza[] stanzeArr;
-
-    int x = 0;
-
+    View lastListView = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +34,6 @@ public class JoinRoomActivity extends AppCompatActivity {
         backButton = findViewById(R.id.backButton);
         joinRoomButton = findViewById(R.id.joinRoomButton);
         reloadBttn = findViewById(R.id.reloadBttn);
-
-        updateRooms();
 
         SetJoinCliccable(false);
 
@@ -51,16 +48,24 @@ public class JoinRoomActivity extends AppCompatActivity {
         View.OnClickListener joinListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                JoinRoom();
-
+                try {
+                    JoinRoom();
+                } catch (CreateRoomErrorException e) {
+                    Toast.makeText(v.getContext(),"Impossibile entrare in room", Toast.LENGTH_SHORT).show();
+                }
             }
         };
 
         AdapterView.OnItemClickListener roomListener = new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SetJoinCliccable(true);
+                if(lastListView != null){
+                    lastListView.setBackgroundColor(Color.argb(0,60,60,60));
+                }
                 lastClicked = position;
+                lastListView = view;
+                view.setBackgroundColor(Color.argb(100,60,60,60));
+                SetJoinCliccable(true);
                 Toast.makeText(parent.getContext(), "l id è " + stanzeArr[position].getId() , Toast.LENGTH_SHORT).show();
             }
         };
@@ -68,7 +73,7 @@ public class JoinRoomActivity extends AppCompatActivity {
         View.OnClickListener reloadListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                x = x+1;
+//                lastView = lastView.restor
                 Toast.makeText(v.getContext(), "Reload in corso", Toast.LENGTH_SHORT).show();
                 updateRooms();
             }
@@ -82,22 +87,25 @@ public class JoinRoomActivity extends AppCompatActivity {
 
     private void SetJoinCliccable(boolean enabled) {
         joinRoomButton.setEnabled(enabled);
-        //aggiungere opacità o visibilità pulsante?
     }
 
     @Override
     protected void onResume(){
-//        Toast.makeText(JoinRoomActivity.this, x, Toast.LENGTH_SHORT).show();
         super.onResume();
         updateRooms();
         SetJoinCliccable(false);
     }
 
-    private void JoinRoom() {
-        if(MainActivity.serverRequester.joinRoom(stanzeArr[lastClicked].getId())){
+    static class CreateRoomErrorException extends Exception{
+
+    }
+
+    private void JoinRoom() throws CreateRoomErrorException {
+        if(lastClicked != -1 && MainActivity.serverRequester.joinRoom(stanzeArr[lastClicked].getId())){
             goToLobbyActivity();
         }else{
             updateRooms();
+            throw new CreateRoomErrorException();
         }
     }
 

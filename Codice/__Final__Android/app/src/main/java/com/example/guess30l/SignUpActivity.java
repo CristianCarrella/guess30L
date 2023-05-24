@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SignUpActivity extends AppCompatActivity {
     TextView signupText, loginText, errorText;
@@ -41,27 +42,29 @@ public class SignUpActivity extends AppCompatActivity {
                 if(!email.equals("") && !password.equals("") && !username.equals("")){
                     if(MainActivity.serverRequester.signupRequest(email, password, username)){
                         errorText.setTextColor(Color.GREEN);
-                        errorText.setText("Registrazione andata a buon fine");
+                        Toast.makeText(v.getContext(),"REGISTRAZIONE AVVENUTA CON SUCCESSO", Toast.LENGTH_LONG).show();
                     }else{
                         errorText.setTextColor(Color.RED);
+                        Toast.makeText(v.getContext(),"Errore durante la registrazione", Toast.LENGTH_LONG).show();
                         errorText.setText("Errore durante la registrazione");
                     }
                 }else{
                     errorText.setTextColor(Color.RED);
+                    Toast.makeText(v.getContext(),"I campi non possono essere vuoti", Toast.LENGTH_LONG).show();
                     errorText.setText("I campi non possono essere vuoti");
                 }
             }
         };
 
 
-        View.OnClickListener onClickListener = new View.OnClickListener() {
+        View.OnClickListener loginListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 goToLoginActivity();
             }
         };
 
-        loginText.setOnClickListener(onClickListener);
+        loginText.setOnClickListener(loginListener);
         signupButton.setOnClickListener(signupListener);
     }
 

@@ -13,12 +13,12 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try {
-            buffer = ServerRequester.readSocket(MainActivity.serverRequester.socket);
-            System.out.println(buffer);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            buffer = ServerRequester.readSocket(MainActivity.serverRequester.socket);
+//            System.out.println(buffer);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
 
 
     }

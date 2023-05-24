@@ -16,6 +16,7 @@ public class CreateRoomActivity extends AppCompatActivity {
     AppCompatButton createRoomButton;
     TextView errorText;
     EditText numeroMaxGiocatoriField, numeroRoundField, nomeStamzaField;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,11 +58,10 @@ public class CreateRoomActivity extends AppCompatActivity {
     private int CreateRoom() throws RoomErrorException {
 
         String nomeStamza = nomeStamzaField.getText().toString();
+        String numeroRound = normalizeNumber(numeroRoundField);
+        String numeroMaxGiocatori = normalizeNumber(numeroMaxGiocatoriField);
 
-        String numeroRound = normalizeNumber(numeroRoundField, 20);
-        String numeroMaxGiocatori = normalizeNumber(numeroMaxGiocatoriField, 20);
-
-        if(!nomeStamza.equals("")){
+        if(!nomeStamza.equals("") && !numeroRound.equals("") && !numeroMaxGiocatori.equals("")){
             return MainActivity.serverRequester.CreateRoomRequest(nomeStamza, numeroRound, numeroMaxGiocatori);
         } else {
             throw new RoomErrorException();
@@ -69,12 +69,12 @@ public class CreateRoomActivity extends AppCompatActivity {
 
     }
 
-    private String normalizeNumber(EditText editText, int i){
-        Integer intTmp = Integer.valueOf(editText.getText().toString());
-        if(intTmp > i){
-            intTmp = i;
+    private String normalizeNumber(EditText editText){
+        int intTmp = Integer.parseInt(editText.getText().toString());
+        if(intTmp > (Integer) 20){
+            intTmp = 20;
         }
-        return intTmp.toString();
+        return Integer.toString(intTmp);
     }
 
 
