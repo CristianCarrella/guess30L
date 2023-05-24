@@ -165,13 +165,16 @@ void *handle2_client(void *par_) {
             bool result = false;
             stanza *currentRoom = get_stanza_by_id(utenteLoggato->idStanza);
             if(currentRoom != NULL) {
-                currentRoom->started = true;
+                // currentRoom->started = true; //moved down
                 result = true;
             }
             json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
             sendResponse(json, socket);
             //Svolgimento del gioco
             if(result)
+                //currentRoom
+                wait_until_ready(currentRoom,utenteLoggato);
+                currentRoom->started = true;
                 email = start_room(get_stanza_by_id(utenteLoggato->idStanza), 2);
             //Fine del gioco
             rm_stanza_by_id(utenteLoggato->idStanza);
