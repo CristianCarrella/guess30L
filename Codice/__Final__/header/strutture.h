@@ -15,6 +15,7 @@ typedef struct {
 	int idStanza;
 	int clientSocket;
 	int imgId;
+	bool isReady;
 	pthread_t tid;
 } utente;
 
@@ -26,6 +27,7 @@ typedef struct {
 	bool started;
 	utente *adminUser;
 	utente **players; //Array di utenti
+	pthread_mutex_t roomMutex;
 } stanza;
 
 extern stanza *stanze[50];
@@ -66,5 +68,8 @@ bool isAdmin(utente*, stanza*);
 void rm_user_from_last_room(utente *user);
 
 int rm_user_from_room_by_username(char username[32], stanza *room );
+
+void delete_utente_from_connected_room(utente * user);
+void wait_until_ready(stanza * room, utente * user);
 
 #endif
