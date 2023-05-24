@@ -87,7 +87,7 @@ void *handle2_client(void *par_) {
             char* base64image_encoded = getAvatarByEmail(conn, email,  pthread_self());
 
             json_object_object_add(json, "email", json_object_new_string(email));
-            json_object_object_add(json, "avatarBase64", json_object_new_string(base64image_encoded)); //al client arriverà con dei backslash in più base64image_encoded
+            json_object_object_add(json, "avatarBase64", json_object_new_string("base64image_encoded")); //al client arriverà con dei backslash in più base64image_encoded
             sendResponse(json, socket);
         }
         else if(strcmp(operation, "setAvatar") == 0){
@@ -165,7 +165,7 @@ void *handle2_client(void *par_) {
             bool result = false;
             stanza *currentRoom = get_stanza_by_id(utenteLoggato->idStanza);
             if(currentRoom != NULL) {
-                // currentRoom->started = true; //moved down
+                currentRoom->started = true; //moved down
                 result = true;
             }
             json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
@@ -174,7 +174,8 @@ void *handle2_client(void *par_) {
             if(result)
                 //currentRoom
                 wait_until_ready(currentRoom,utenteLoggato);
-                currentRoom->started = true;
+                currentRoom->tmp = true;
+                // currentRoom->started = true;
                 email = start_room(get_stanza_by_id(utenteLoggato->idStanza), 2);
             //Fine del gioco
             rm_stanza_by_id(utenteLoggato->idStanza);
@@ -204,6 +205,7 @@ void *handle2_client(void *par_) {
             }
 
             sendResponse(json, socket);
+            wait_until_ready(stanzaAttuale,utenteLoggato);
             //{isAdminExited: true} oppure { usersInLobby[{username: user1}, {username: user2}...], isGameStarted: true/false }
             if(stanzaAttuale->started) {
                 signal(SIGUSR1, thread_unlock);

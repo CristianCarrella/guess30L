@@ -42,6 +42,9 @@ stanza *new_stanza(int id, char* nome, int maxPlayer, utente *admin)
 	}
 	nuovo->players[0] = admin;
 	pthread_mutex_init(&nuovo->roomMutex, NULL);
+	pthread_mutex_lock(&nuovo->roomMutex);
+	
+	nuovo->tmp = false;
 	return nuovo;
 }
 
@@ -254,20 +257,26 @@ void delete_utente_from_connected_room(utente * user){
 }
 
 void wait_until_ready(stanza * room, utente * user){
-	user->isReady = true;
-	bool canNext = true;
-	for(int i = 0; i < room->numeroMaxGiocatori; i++){
-		if(room->players[i] != NULL){
-			if(room->players[i]->isReady == false){
-				canNext = false;
+	if(room->started == true){
+		user->isReady = true;
+		bool canNext = true;
+		for(int i = 0; i < room->numeroMaxGiocatori; i++){
+			if(room->players[i] != NULL){
+				if(room->players[i]->isReady == false){
+					printf("canNext = false\n");
+					canNext = false;
+				}
 			}
 		}
-	}
-	if (canNext == true)
-	{
-		pthread_mutex_unlock(&room->roomMutex);
-	}else if(!room->started){
-		pthread_mutex_trylock(&room->roomMutex);
+		if (canNext == true){
+			printf("pthread_mutex_unlock pre\n");
+			pthread_mutex_unlock(&room->roomMutex);
+			printf("pthread_mutex_unlock post\n");
+		}else if(!room->tmp){
+			printf("pthread_mutex_trylock pre\n");
+			pthread_mutex_lock(&room->roomMutex);
+			printf("pthread_mutex_trylock post\n");
+		}
 	}
 	
 }

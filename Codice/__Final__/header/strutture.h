@@ -25,6 +25,7 @@ typedef struct {
 	int numeroMaxGiocatori;
 	int turn;
 	bool started;
+	bool tmp;
 	utente *adminUser;
 	utente **players; //Array di utenti
 	pthread_mutex_t roomMutex;
