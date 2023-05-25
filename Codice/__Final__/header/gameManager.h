@@ -16,7 +16,7 @@
 #include "word.h"
 
 #define BUFFDIM 4096
-#define NUMBER_OF_SUGGESTED_WORD 4
+#define NUMBER_OF_SUGGESTED_WORD 5
 
 //Funzione da chiamare per cominciare la partita all'interno di una stanza. Ritorna l'email del vincitore della partita
 char *start_room(stanza*, int);

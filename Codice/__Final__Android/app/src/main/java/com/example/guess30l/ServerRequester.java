@@ -31,7 +31,7 @@ public class ServerRequester {
     private ScheduledExecutorService scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
     static ScheduledFuture<?> t;
     public static boolean gameIsStartedOrQuit = false;
-    Socket socket;
+    public Socket socket;
 
     public ServerRequester(){
         /* Le operazioni di rete non si possono fare sul thread UI */
@@ -143,7 +143,7 @@ public class ServerRequester {
     }
 
     public void updateLobbyRequestScheduled(LobbyActivity lobbyActivity) {
-        t =scheduleTaskExecutor.scheduleAtFixedRate( new LobbyRequestScheduledCallable(socket, lobbyActivity), 0,5, TimeUnit.SECONDS);
+        t =scheduleTaskExecutor.scheduleAtFixedRate( new LobbyRequestScheduledCallable(socket, lobbyActivity), 0,2, TimeUnit.SECONDS);
     }
 
     public Integer updateLobbyRequest(LobbyActivity lobbyActivity) {
