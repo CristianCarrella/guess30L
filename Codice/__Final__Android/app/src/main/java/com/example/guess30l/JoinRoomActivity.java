@@ -20,7 +20,7 @@ public class JoinRoomActivity extends AppCompatActivity {
     ListView listView;
     ImageView backButton;
     AppCompatButton joinRoomButton;
-    Button reloadBttn;
+    ImageView reloadBttn;
     int lastClicked = -1;
     Stanza[] stanzeArr;
     View lastListView = null;

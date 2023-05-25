@@ -43,6 +43,7 @@ public class SignUpActivity extends AppCompatActivity {
                     if(MainActivity.serverRequester.signupRequest(email, password, username)){
                         errorText.setTextColor(Color.GREEN);
                         Toast.makeText(v.getContext(),"REGISTRAZIONE AVVENUTA CON SUCCESSO", Toast.LENGTH_LONG).show();
+                        goToLoginActivity();
                     }else{
                         errorText.setTextColor(Color.RED);
                         Toast.makeText(v.getContext(),"Errore durante la registrazione", Toast.LENGTH_LONG).show();
