@@ -55,12 +55,18 @@ public class GameActivity extends AppCompatActivity {
         submitBtn = findViewById(R.id.submitBtn);
         textBox = findViewById(R.id.textBox);
         loadingBar = findViewById(R.id.loadingBar);
+        GameManager game = new GameManager(this);
+        View.OnClickListener submitListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                submitAttempt(game.getMyTurn());
+            }
+        };
+        submitBtn.setOnClickListener(submitListener);
 
         definitionView.setVisibility(View.INVISIBLE);
         wordView.setVisibility(View.INVISIBLE);
         submitBtn.setActivated(false);
-
-        GameManager game = new GameManager(this);
         game.start();
     }
 
@@ -83,7 +89,7 @@ public class GameActivity extends AppCompatActivity {
         this.wordView.setVisibility(View.VISIBLE);
     }
 
-    public void submitAttempt(CountDownTimer timer) {
+    public void submitAttempt(GameManager.Turn turn) {
         String attempt = textBox.getText().toString().toUpperCase();
         guessed = word.toUpperCase().equals(attempt);
         JSONObject js_obj = new JSONObject();
@@ -94,7 +100,9 @@ public class GameActivity extends AppCompatActivity {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-        timer.cancel();
+        turn.getTimer().cancel();
+        turn.setAttempt(js_obj.toString());
+        turn.interrupt();
     }
 
     public static class ChooseDialog extends DialogFragment {

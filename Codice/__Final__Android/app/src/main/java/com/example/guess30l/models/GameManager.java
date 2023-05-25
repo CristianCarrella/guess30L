@@ -19,6 +19,7 @@ import java.util.Date;
 public class GameManager extends Thread {
     GameActivity gameActivity;
     String buffer;
+    Turn myTurn;
     int parolaID = -1;
 
     public GameManager(GameActivity game) {
@@ -75,7 +76,13 @@ public class GameManager extends Thread {
         ///////////////SEZIONE DI GIOCO///////////////
         buffer = recv();
         if (buffer.contains("YOUR_TURN")) {
-
+            myTurn = new Turn();
+            try {
+                myTurn.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
         } else if (buffer.contains("NEW_HINT")) {
 
         } else if (buffer.contains("HINT_END")) {
@@ -137,23 +144,42 @@ public class GameManager extends Thread {
         }
     }
 
-    private class Turn extends Thread {
-        CountDownTimer timer = new CountDownTimer(20 * 60000, 1000) {
+    public Turn getMyTurn() {
+        return myTurn;
+    }
+
+    public class Turn extends Thread {
+        private String attempt = "";
+        private CountDownTimer timer = new CountDownTimer(20 * 60000, 1000) {
             public void onTick(long millisUntilFinished) {
-                gameActivity.timerView.setText(new SimpleDateFormat("mm:ss:SS").format(new Date(millisUntilFinished)));
+                gameActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        gameActivity.timerView.setText(new SimpleDateFormat("mm:ss:SS").format(new Date(millisUntilFinished)));
+                    }
+                });
             }
 
             public void onFinish() {
-                gameActivity.submitAttempt(this);
+                gameActivity.submitAttempt(Turn.this);
             }
         };
+
+        public void setAttempt(String attempt) {
+            this.attempt = attempt;
+        }
+
+        public CountDownTimer getTimer() {
+            return timer;
+        }
 
         @Override
         public void run() {
             try {
+                timer.start();
                 wait();
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                send(attempt);
             }
         }
     }
