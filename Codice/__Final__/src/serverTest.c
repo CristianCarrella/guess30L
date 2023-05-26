@@ -170,13 +170,14 @@ void *handle2_client(void *par_) {
             }
             json_object_object_add(json, "isSuccess", json_object_new_boolean(result));
             sendResponse(json, socket);
+            sleep(3);
             //Svolgimento del gioco
-            if(result)
-                //currentRoom
-                wait_until_ready(currentRoom,utenteLoggato);
-                currentRoom->tmp = true;
-                // currentRoom->started = true;
+            if(result) {
+                //wait_until_ready(currentRoom,utenteLoggato);
+                //currentRoom->tmp = true;
+                currentRoom->started = true;
                 email = start_room(get_stanza_by_id(utenteLoggato->idStanza), 2);
+            }
             //Fine del gioco
             rm_stanza_by_id(utenteLoggato->idStanza);
             strcpy(winnerEmail, email);
@@ -206,6 +207,7 @@ void *handle2_client(void *par_) {
 
             sendResponse(json, socket);
             wait_until_ready(stanzaAttuale,utenteLoggato);
+            //wait_until_ready(stanzaAttuale,utenteLoggato);
             //{isAdminExited: true} oppure { usersInLobby[{username: user1}, {username: user2}...], isGameStarted: true/false }
             if(stanzaAttuale->started) {
                 signal(SIGUSR1, thread_unlock);
