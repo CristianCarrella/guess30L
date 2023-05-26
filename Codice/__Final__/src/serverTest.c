@@ -206,7 +206,6 @@ void *handle2_client(void *par_) {
             }
 
             sendResponse(json, socket);
-            wait_until_ready(stanzaAttuale,utenteLoggato);
             //wait_until_ready(stanzaAttuale,utenteLoggato);
             //{isAdminExited: true} oppure { usersInLobby[{username: user1}, {username: user2}...], isGameStarted: true/false }
             if(stanzaAttuale->started) {
