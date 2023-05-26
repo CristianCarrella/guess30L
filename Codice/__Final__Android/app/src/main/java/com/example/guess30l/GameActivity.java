@@ -3,6 +3,7 @@ package com.example.guess30l;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.os.CountDownTimer;
@@ -32,17 +33,16 @@ public class GameActivity extends AppCompatActivity {
 
     String definition;
     String word;
-    String gameLog;
 
-    TextView definitionView;
-    TextView wordView;
-    TextView gameLogView;
+    public TextView definitionView;
+    public TextView wordView;
+    public TextView gameLogView;
     public TextView timerView;
-    Button submitBtn;
+    private CountDownTimer timer;
+    public Button submitBtn;
     EditText textBox;
     public ProgressBar loadingBar;
     boolean guessed = false;
-    boolean myTurn = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,10 +63,6 @@ public class GameActivity extends AppCompatActivity {
             }
         };
         submitBtn.setOnClickListener(submitListener);
-
-        definitionView.setVisibility(View.INVISIBLE);
-        wordView.setVisibility(View.INVISIBLE);
-        submitBtn.setActivated(false);
         game.start();
     }
 
@@ -90,19 +86,25 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void submitAttempt(GameManager.Turn turn) {
-        String attempt = textBox.getText().toString().toUpperCase();
-        guessed = word.toUpperCase().equals(attempt);
+        String attempt = textBox.getText().toString();
+        turn.setGuessed(word.toUpperCase().equals(attempt));
         JSONObject js_obj = new JSONObject();
         try {
-            js_obj.put("guessed", guessed);
+            js_obj.put("guessed", turn.isGuessed());
             js_obj.put("playerName", LoginActivity.loggedUser.getUsername());
             js_obj.put("word", attempt);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-        turn.getTimer().cancel();
+        textBox.setText("");
+        timer.cancel();
         turn.setAttempt(js_obj.toString());
         turn.interrupt();
+    }
+
+    public void startTimer(CountDownTimer t) {
+        timer = t;
+        timer.start();
     }
 
     public static class ChooseDialog extends DialogFragment {
@@ -135,5 +137,11 @@ public class GameActivity extends AppCompatActivity {
         ChooseDialog chooseDialog = new ChooseDialog(parole);
         chooseDialog.show(getSupportFragmentManager(), "Scegli la parola");
         return chooseDialog;
+    }
+
+    public void goToHomeActivity() {
+        Intent myIntent = new Intent(GameActivity.this, HomeActivity.class);
+        GameActivity.this.startActivity(myIntent);
+        finish();
     }
 }

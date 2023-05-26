@@ -1,9 +1,13 @@
 package com.example.guess30l.models;
 
+import android.content.Intent;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.View;
 
+import com.example.guess30l.CreateRoomActivity;
 import com.example.guess30l.GameActivity;
+import com.example.guess30l.HomeActivity;
 import com.example.guess30l.MainActivity;
 import com.example.guess30l.ServerRequester;
 
@@ -27,69 +31,128 @@ public class GameManager extends Thread {
     }
 
     public void run() {
-        buffer = recv();
-        if (buffer.contains("WAIT")) {
-            send("OK");
-            gameActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+        while(true) {
+            gameActivity.runOnUiThread(() -> {
+                gameActivity.definitionView.setVisibility(View.INVISIBLE);
+                gameActivity.wordView.setVisibility(View.INVISIBLE);
+                gameActivity.submitBtn.setVisibility(View.INVISIBLE);
+                gameActivity.timerView.setVisibility(View.INVISIBLE);
+            });
+            buffer = "";
+            while(buffer.isEmpty())
+                buffer = recv();
+            Log.d("buffer", buffer);
+            if (buffer.contains("WAIT")) {
+
+                gameActivity.runOnUiThread(() -> {
                     gameActivity.setDefinition("In attesa della parola...");
                     gameActivity.loadingBar.setVisibility(View.INVISIBLE);
-                }
-            });
-            String parola[] = recvWord();
-            send("OK");
-            gameActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+                });
+                send("OK");
+                String parola[] = recvWord();
+                gameActivity.runOnUiThread(() -> {
                     gameActivity.setWord(parola[0]);
                     gameActivity.setDefinition(parola[1]);
-                }
-            });
-        } else if (buffer.contains("CHOOSE")) {
-            send("OK");
-            gameActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    gameActivity.setDefinition("Attendi...");
-                }
-            });
-            String[][] words = recvSuggestedWords();
-            GameActivity.ChooseDialog dialog = gameActivity.choose(words);
-            while (parolaID < 0)
-                parolaID = dialog.getSelectedItem();
-            gameActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+                });
+                send("OK");
+            } else if (buffer.contains("CHOOSE")) {
+                gameActivity.runOnUiThread(() -> gameActivity.setDefinition("Attendi..."));
+                send("OK");
+                String[][] words = recvSuggestedWords();
+                GameActivity.ChooseDialog dialog = gameActivity.choose(words);
+                while (parolaID < 0)
+                    parolaID = dialog.getSelectedItem();
+                gameActivity.runOnUiThread(() -> {
                     gameActivity.setWord(words[parolaID][0]);
                     gameActivity.setDefinition(words[parolaID][1]);
-                }
-            });
-            send(words[parolaID][0]);
-
-        } else if (buffer.contains("END")) {
-            send("OK");
-            ///////
-            return;
-
-        }
-        ///////////////SEZIONE DI GIOCO///////////////
-        buffer = recv();
-        if (buffer.contains("YOUR_TURN")) {
-            myTurn = new Turn();
-            try {
-                myTurn.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
+                });
+                send(words[parolaID][0]);
+            } else if (buffer.contains("END")) {
+                send("OK");
+                gameActivity.runOnUiThread(() -> gameActivity.goToHomeActivity());
+                return;
             }
-        } else if (buffer.contains("NEW_HINT")) {
-
-        } else if (buffer.contains("HINT_END")) {
-
-        } else {
-
+            ///////////////SEZIONE DI GIOCO/////////////////
+            Log.d("buffer", "///sezione di gioco///");
+            boolean guessed = false;
+            while (!guessed) {
+                buffer = "";
+                buffer = recv();
+                Log.d("buffer", buffer);
+                if (buffer.contains("YOUR_TURN")) {
+                    myTurn = new Turn();
+                    myTurn.start();
+                    try {
+                        myTurn.join();
+                        guessed = myTurn.isGuessed();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        throw new RuntimeException(e);
+                    }
+                    gameActivity.runOnUiThread(() -> {
+                        gameActivity.submitBtn.setVisibility(View.INVISIBLE);
+                        gameActivity.timerView.setVisibility(View.INVISIBLE);
+                    });
+                } else if (buffer.contains("NEW_HINT")) {
+                    send("OK");
+                    buffer = recv();
+                    addHint(buffer);
+                    send("OK");
+                } else if (buffer.contains("HINT_END")) {
+                    guessed = true;
+                    addToLog("Nessuno ha indovinato :(");
+                    send("OK");
+                } else if (buffer.contains("{")) {
+                    guessed = updateLog(buffer);
+                    send("OK");
+                }
+            }
         }
+    }
+
+    private void addHint(String buffer) {
+        Character letter;
+        Integer pos;
+        String parola = gameActivity.wordView.getText().toString();
+        try {
+            JSONObject js_obj = new JSONObject(buffer);
+            letter = js_obj.getString("letter").toUpperCase().charAt(0);
+            pos = js_obj.getInt("position");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        String newParola = parola.substring(0, pos*2) + letter
+                 + parola.substring( pos*2 + 1);
+        gameActivity.runOnUiThread( () -> gameActivity.wordView.setText(newParola));
+    }
+
+    //Restituisce guessed
+    public boolean updateLog(String buffer) {
+        String word, username, msg;
+        boolean guessed;
+        try {
+            JSONObject js_obj = new JSONObject(buffer);
+            word = js_obj.getString("word");
+            username = js_obj.getString("playerName");
+            guessed = js_obj.getBoolean("guessed");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
+        if(guessed)
+            msg = username+" ha indovinato la parola "+word+"!";
+        else if(word.isEmpty())
+            msg = username+" ha passato il turno";
+        else
+            msg = username+" ha provato con "+word;
+        addToLog(msg);
+        return guessed;
+    }
+
+    public void addToLog(String msg) {
+        String text = msg + "\n" + gameActivity.gameLogView.getText().toString();
+        gameActivity.runOnUiThread(() -> gameActivity.gameLogView.setText(text));
     }
 
     public String[][] recvSuggestedWords() {
@@ -150,37 +213,38 @@ public class GameManager extends Thread {
 
     public class Turn extends Thread {
         private String attempt = "";
-        private CountDownTimer timer = new CountDownTimer(20 * 60000, 1000) {
-            public void onTick(long millisUntilFinished) {
-                gameActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        gameActivity.timerView.setText(new SimpleDateFormat("mm:ss:SS").format(new Date(millisUntilFinished)));
-                    }
-                });
-            }
-
-            public void onFinish() {
-                gameActivity.submitAttempt(Turn.this);
-            }
-        };
-
+        private boolean guessed = false;
         public void setAttempt(String attempt) {
             this.attempt = attempt;
         }
-
-        public CountDownTimer getTimer() {
-            return timer;
-        }
-
         @Override
         public void run() {
+            gameActivity.runOnUiThread( () ->
+            {
+                gameActivity.submitBtn.setVisibility(View.VISIBLE);
+                gameActivity.timerView.setVisibility(View.VISIBLE);
+                gameActivity.startTimer(new CountDownTimer(15000, 1000) {
+                    public void onTick(long millisUntilFinished){
+                        gameActivity.timerView.setText(new SimpleDateFormat("ss").format(new Date(millisUntilFinished)));
+                    }
+                    public void onFinish() {
+                        gameActivity.submitAttempt(Turn.this);
+                    }
+                });
+            });
             try {
-                timer.start();
-                wait();
+                sleep(50000);
             } catch (InterruptedException e) {
                 send(attempt);
             }
+        }
+
+        public void setGuessed(boolean guessed) {
+            this.guessed = guessed;
+        }
+
+        public boolean isGuessed() {
+            return guessed;
         }
     }
 }
