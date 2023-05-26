@@ -133,6 +133,7 @@ public class ServerRequester {
                     }
                     lobbyActivity.runOnUiThread(()->{
                         lobbyActivity.setPartecipanti(usernames);
+                        lobbyActivity.nPartecipanti.setText(jsonArray.length()+"/");
                     });
                 }
 

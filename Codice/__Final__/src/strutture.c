@@ -143,7 +143,7 @@ int rm_user_from_room_by_username(char username[32], stanza *room ){
 	} else {
 		for (int i = 0; i < room->numeroMaxGiocatori; i++){
 			if(room->players[i] != NULL){
-				if(room->players[i]->username == username){
+				if(strcmp(room->players[i]->username, username) == 0){
 					room->players[i]->idStanza = -1;
 					room->players[i] = NULL;
 					success = true;

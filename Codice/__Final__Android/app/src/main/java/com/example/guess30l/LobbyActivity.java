@@ -17,6 +17,7 @@ import java.util.concurrent.Executors;
 
 public class LobbyActivity extends AppCompatActivity {
     TextView partecipanti;
+    TextView nPartecipanti;
     Button exit;
     Button start;
 
@@ -29,6 +30,7 @@ public class LobbyActivity extends AppCompatActivity {
         exit = findViewById(R.id.exitButton);
         start = findViewById(R.id.startButton);
         partecipanti = findViewById(R.id.partecipanti);
+        nPartecipanti = findViewById(R.id.numberOfParticipants);
         //if admin is exited
         /*if(MainActivity.serverRequester.updateLobbyRequest(this) == 1){
             goToHomeActivity();
