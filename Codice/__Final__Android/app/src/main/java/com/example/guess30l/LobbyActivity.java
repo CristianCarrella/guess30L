@@ -29,7 +29,6 @@ public class LobbyActivity extends AppCompatActivity {
         exit = findViewById(R.id.exitButton);
         start = findViewById(R.id.startButton);
         partecipanti = findViewById(R.id.partecipanti);
-
         //if admin is exited
         /*if(MainActivity.serverRequester.updateLobbyRequest(this) == 1){
             goToHomeActivity();
@@ -65,6 +64,9 @@ public class LobbyActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         MainActivity.serverRequester.updateLobbyRequestScheduled(this);
+        if(!LoginActivity.loggedUser.isAdminStanza()) {
+            start.setVisibility(View.INVISIBLE);
+        }
     }
 
     public void setPartecipanti(ArrayList<String> usernames) {
@@ -79,6 +81,7 @@ public class LobbyActivity extends AppCompatActivity {
     public void goToHomeActivity() {
         Intent myIntent = new Intent(LobbyActivity.this, HomeActivity.class);
         LobbyActivity.this.startActivity(myIntent);
+        LoginActivity.loggedUser.setAdminStanza(false);
     }
 
     public void goToGameActivity() {

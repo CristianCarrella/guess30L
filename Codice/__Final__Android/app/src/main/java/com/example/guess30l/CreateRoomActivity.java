@@ -86,6 +86,7 @@ public class CreateRoomActivity extends AppCompatActivity {
 
     private void goToLobbyActivity(int id){
         Intent myIntent = new Intent(CreateRoomActivity.this, LobbyActivity.class);
+        LoginActivity.loggedUser.setAdminStanza(true);
         CreateRoomActivity.this.startActivity(myIntent);
         finish();
     }

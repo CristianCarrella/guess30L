@@ -3,6 +3,7 @@ package com.example.guess30l.models;
 public class LoggedUser {
     String email, username;
     Integer idStanza, imgId, partiteVinte;
+    Boolean adminStanza = false;
 
     public LoggedUser(String email, Integer idStanza, Integer imgId, Integer partiteVinte, String username){
         this.email = email;
@@ -20,5 +21,13 @@ public class LoggedUser {
     }
     public Integer getPartiteVinte() {
         return partiteVinte;
+    }
+
+    public void setAdminStanza(Boolean adminStanza) {
+        this.adminStanza = adminStanza;
+    }
+
+    public Boolean isAdminStanza() {
+        return adminStanza;
     }
 }
