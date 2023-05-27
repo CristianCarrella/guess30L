@@ -73,7 +73,6 @@ public class JoinRoomActivity extends AppCompatActivity {
         View.OnClickListener reloadListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                lastView = lastView.restor
                 Toast.makeText(v.getContext(), "Reload in corso", Toast.LENGTH_SHORT).show();
                 updateRooms();
             }
@@ -133,6 +132,5 @@ public class JoinRoomActivity extends AppCompatActivity {
         RoomListView<String> adapter = new RoomListView<String>(this, nomiStanze, playerInRoom);
         listView.setAdapter(adapter);
     }
-
 
 }

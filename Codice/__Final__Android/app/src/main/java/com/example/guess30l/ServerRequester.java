@@ -591,7 +591,7 @@ public class ServerRequester {
         int c;
         int count = 0;
         try {
-            Thread.sleep(100);
+            Thread.sleep(200);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
