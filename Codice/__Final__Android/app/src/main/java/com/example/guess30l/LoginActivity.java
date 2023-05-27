@@ -94,6 +94,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public static boolean isValidEmail(CharSequence target) {
-        return true; //(!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
+        return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
     }
 }

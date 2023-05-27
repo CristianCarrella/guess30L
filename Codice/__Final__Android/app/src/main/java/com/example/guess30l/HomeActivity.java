@@ -46,6 +46,8 @@ public class HomeActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        LoginActivity.loggedUser.setAdminStanza(false);
+
         View.OnClickListener joinRoomListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {

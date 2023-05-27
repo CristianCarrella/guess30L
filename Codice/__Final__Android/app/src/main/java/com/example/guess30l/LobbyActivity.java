@@ -83,7 +83,6 @@ public class LobbyActivity extends AppCompatActivity {
     public void goToHomeActivity() {
         Intent myIntent = new Intent(LobbyActivity.this, HomeActivity.class);
         LobbyActivity.this.startActivity(myIntent);
-        LoginActivity.loggedUser.setAdminStanza(false);
     }
 
     public void goToGameActivity() {
