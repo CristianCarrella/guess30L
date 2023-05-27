@@ -116,14 +116,14 @@ public class ServerRequester {
 
                 String js = readSocket(socket);
                 if(js.contains("isAdminExited")){
-                    lobbyActivity.goToHomeActivity();
                     t.cancel(true);
+                    lobbyActivity.goToHomeActivity();
                 } else {
                     JSONObject jsonObject = new JSONObject(js);
 
                     if(jsonObject.getBoolean("isGameStarted")) {
-                        lobbyActivity.goToGameActivity();
                         t.cancel(true);
+                        lobbyActivity.goToGameActivity();
                     }
 
                     JSONArray jsonArray = jsonObject.getJSONArray("usersInLobby");
@@ -591,7 +591,7 @@ public class ServerRequester {
         int c;
         int count = 0;
         try {
-            Thread.sleep(100);
+            Thread.sleep(200);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
