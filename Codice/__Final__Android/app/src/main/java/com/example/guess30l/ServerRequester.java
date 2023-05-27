@@ -590,19 +590,16 @@ public class ServerRequester {
         StringBuilder sb = new StringBuilder();
         int c;
         int count = 0;
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         while ((c = reader.read()) != -1) {
             count++;
             sb.append((char) c);
             if (!reader.ready()) {
                 break;
-            }
-            if(count == 5000){
-                try {
-                    Thread.sleep(50);
-                    count = 0;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
             }
         }
         Log.d("read socket",sb.toString());
