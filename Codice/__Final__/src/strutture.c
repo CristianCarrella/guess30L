@@ -187,6 +187,8 @@ stanza *get_stanza_by_id(int id){
 		if(stanze[id] != NULL){
 			return stanze[id];
 		}
+	} else {
+		return NULL;
 	}
 }
 
