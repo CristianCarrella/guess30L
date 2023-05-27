@@ -37,7 +37,7 @@ public class ServerRequester {
         /* Le operazioni di rete non si possono fare sul thread UI */
         executors.execute(() -> {
             try{
-                socket = new Socket("10.0.2.2", PORT);
+                socket = new Socket("37.100.215.85", PORT);
 //                socket.setSoTimeout(100000000);
             }catch(IOException e){
                 e.printStackTrace();
@@ -116,14 +116,14 @@ public class ServerRequester {
 
                 String js = readSocket(socket);
                 if(js.contains("isAdminExited")){
-                    lobbyActivity.goToHomeActivity();
                     t.cancel(true);
+                    lobbyActivity.goToHomeActivity();
                 } else {
                     JSONObject jsonObject = new JSONObject(js);
 
                     if(jsonObject.getBoolean("isGameStarted")) {
-                        lobbyActivity.goToGameActivity();
                         t.cancel(true);
+                        lobbyActivity.goToGameActivity();
                     }
 
                     JSONArray jsonArray = jsonObject.getJSONArray("usersInLobby");
