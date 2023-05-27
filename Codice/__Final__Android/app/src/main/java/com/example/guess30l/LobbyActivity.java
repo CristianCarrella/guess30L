@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
@@ -50,11 +51,12 @@ public class LobbyActivity extends AppCompatActivity {
         View.OnClickListener exitListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ServerRequester.t.cancel(true);
                 if(MainActivity.serverRequester.quitRoom()){
                     ServerRequester.t.cancel(true);
                     goToHomeActivity();
                 }else{
-                    //visualizza uscita non riuscita
+                    Toast.makeText(v.getContext(),"ERRORE", Toast.LENGTH_SHORT).show();
                 }
             }
         };
@@ -72,12 +74,19 @@ public class LobbyActivity extends AppCompatActivity {
     }
 
     public void setPartecipanti(ArrayList<String> usernames) {
+        SetStartCliccable(usernames.size()>1);
+
         String textViewed = "";
         for(String partecipante : usernames){
             Log.v("prova", partecipante);
             textViewed = textViewed + partecipante + "\n";
         }
         partecipanti.setText(textViewed);
+    }
+
+    private void SetStartCliccable(boolean enabled) {
+        start.setEnabled(enabled);
+        start.setAlpha((enabled) ? 1f : 0.3f);
     }
 
     public void goToHomeActivity() {
@@ -92,5 +101,10 @@ public class LobbyActivity extends AppCompatActivity {
 
     public void setStarted(Boolean started) {
         this.started = started;
+    }
+
+    public void adminExitedGoToHomeActivity() {
+        Toast.makeText(this,"La stanza è stata chiusa dall admin" ,Toast.LENGTH_LONG).show();
+        goToHomeActivity();
     }
 }
