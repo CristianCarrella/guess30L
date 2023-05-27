@@ -42,7 +42,7 @@ public class GameActivity extends AppCompatActivity {
     public Button submitBtn;
     EditText textBox;
     public ProgressBar loadingBar;
-    boolean guessed = false;
+    GameManager game;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +55,7 @@ public class GameActivity extends AppCompatActivity {
         submitBtn = findViewById(R.id.submitBtn);
         textBox = findViewById(R.id.textBox);
         loadingBar = findViewById(R.id.loadingBar);
-        GameManager game = new GameManager(this);
+        game = new GameManager(this);
         View.OnClickListener submitListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,6 +93,7 @@ public class GameActivity extends AppCompatActivity {
             js_obj.put("guessed", turn.isGuessed());
             js_obj.put("playerName", LoginActivity.loggedUser.getUsername());
             js_obj.put("word", attempt);
+            game.addToLog("Hai provato con "+attempt);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
