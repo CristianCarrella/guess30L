@@ -113,7 +113,7 @@ public class GameActivity extends AppCompatActivity {
         timer.start();
     }
 
-    public static class ChooseDialog extends DialogFragment {
+    public class ChooseDialog extends DialogFragment {
         private String[] items;
         private int selectedID = -1;
 
