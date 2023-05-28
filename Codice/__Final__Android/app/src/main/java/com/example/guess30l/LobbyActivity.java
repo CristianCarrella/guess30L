@@ -65,6 +65,11 @@ public class LobbyActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        // Ignora l'evento o mostra un messaggio di avviso
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         MainActivity.serverRequester.updateLobbyRequestScheduled(this);
