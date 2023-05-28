@@ -78,6 +78,11 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        // Ignora l'evento o mostra un messaggio di avviso
+    }
+
     private void goToCreateRoomActivity() {
         Intent myIntent = new Intent(HomeActivity.this, CreateRoomActivity.class);
         HomeActivity.this.startActivity(myIntent);

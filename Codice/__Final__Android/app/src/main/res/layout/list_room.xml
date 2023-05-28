@@ -21,9 +21,10 @@
 
     <TextView
         android:id="@+id/players"
-        android:layout_width="87dp"
-        android:layout_height="37dp"
-        android:layout_marginStart="64dp"
+        android:layout_width="69dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="24dp"
         android:text="TextView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -66,6 +66,7 @@ public class JoinRoomActivity extends AppCompatActivity {
                 lastListView = view;
                 view.setBackgroundColor(Color.argb(100,60,60,60));
                 SetJoinCliccable(true);
+
                 Toast.makeText(parent.getContext(), "l id è " + stanzeArr[position].getId() , Toast.LENGTH_SHORT).show();
             }
         };
@@ -86,6 +87,7 @@ public class JoinRoomActivity extends AppCompatActivity {
 
     private void SetJoinCliccable(boolean enabled) {
         joinRoomButton.setEnabled(enabled);
+        joinRoomButton.setAlpha((enabled) ? 1f : 0.3f);
     }
 
     @Override

@@ -66,6 +66,11 @@ public class GameActivity extends AppCompatActivity {
         game.start();
     }
 
+    @Override
+    public void onBackPressed() {
+        // Ignora l'evento o mostra un messaggio di avviso
+    }
+
     public void setDefinition(String definition) {
         this.definition = definition;
         this.definitionView.setVisibility(View.VISIBLE);
