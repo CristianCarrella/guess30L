@@ -44,7 +44,7 @@ void *handle2_client(void *par_) {
     while (1) {
         visualizza_stanze();
 
-        if ((read(socket, buffer, 2048)) == 0) {
+        if ((read(socket, buffer, 2048)) < 1) {
             printf("Client disconnected.\n");
             break;
         }
@@ -87,7 +87,7 @@ void *handle2_client(void *par_) {
             char* base64image_encoded = getAvatarByEmail(conn, email,  pthread_self());
 
             json_object_object_add(json, "email", json_object_new_string(email));
-            //json_object_object_add(json, "avatarBase64", json_object_new_string(base64image_encoded)); //al client arriverà con dei backslash in più base64image_encoded
+            json_object_object_add(json, "avatarBase64", json_object_new_string(base64image_encoded)); //al client arriverà con dei backslash in più base64image_encoded
             sendResponse(json, socket);
         }
         else if(strcmp(operation, "setAvatar") == 0){
@@ -180,8 +180,11 @@ void *handle2_client(void *par_) {
             }
             //Fine del gioco
             rm_stanza_by_id(utenteLoggato->idStanza);
-            strcpy(winnerEmail, email);
-            updateUserPartiteVinte(conn, winnerEmail);
+            if(email != NULL) {
+                strcpy(winnerEmail, email);
+                updateUserPartiteVinte(conn, winnerEmail);
+            }
+            rm_stanza(currentRoom);
         }
         else if(strcmp(operation, "updateLobby") == 0){
             struct json_object * jsonArray = json_object_new_array();
