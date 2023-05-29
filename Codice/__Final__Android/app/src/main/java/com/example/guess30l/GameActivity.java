@@ -113,34 +113,11 @@ public class GameActivity extends AppCompatActivity {
         timer.start();
     }
 
-    public class ChooseDialog extends DialogFragment {
-        private String[] items;
-        private int selectedID = -1;
-
-        public ChooseDialog(String[] items) {
-            this.items = items;
-        }
-        public int getSelectedItem(){
-            return selectedID;
-        }
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle("Scegli la parola")
-                    .setItems(items, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            selectedID = which;
-                        }
-                    });
-            return builder.create();
-        }
-    }
-
     public ChooseDialog choose(String[][] words) {
         String[] parole = new String[5];
         for(int i = 0; i < 5; i++)
             parole[i] = words[i][0];
-        ChooseDialog chooseDialog = new ChooseDialog(parole);
+        ChooseDialog chooseDialog = new ChooseDialog(parole, -1);
         chooseDialog.show(getSupportFragmentManager(), "Scegli la parola");
         return chooseDialog;
     }

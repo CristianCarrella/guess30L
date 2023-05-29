@@ -48,9 +48,8 @@ char* start_room(stanza* currentRoom, int targetScore) {
 
     //Sblocca thread degli altri utenti
     for(i = 0; i < currentRoom->numeroMaxGiocatori; i++) {
-        if(currentRoom->players[i] == NULL)
-            continue;
-        pthread_kill(currentRoom->players[i]->tid, SIGUSR1);
+        if(currentRoom->players[i] != NULL)
+            pthread_kill(currentRoom->players[i]->tid, SIGUSR1);
     }
 
     //Restituice il vincitore

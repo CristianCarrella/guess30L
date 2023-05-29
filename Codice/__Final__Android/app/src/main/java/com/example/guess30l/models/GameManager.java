@@ -5,6 +5,7 @@ import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 
+import com.example.guess30l.ChooseDialog;
 import com.example.guess30l.CreateRoomActivity;
 import com.example.guess30l.GameActivity;
 import com.example.guess30l.HomeActivity;
@@ -24,7 +25,7 @@ public class GameManager extends Thread {
     GameActivity gameActivity;
     String buffer;
     Turn myTurn;
-    int parolaID = -1;
+    int parolaID;
 
     public GameManager(GameActivity game) {
         gameActivity = game;
@@ -59,9 +60,10 @@ public class GameManager extends Thread {
                 gameActivity.runOnUiThread(() -> gameActivity.setDefinition("Attendi..."));
                 send("OK");
                 String[][] words = recvSuggestedWords();
-                GameActivity.ChooseDialog dialog = gameActivity.choose(words);
-                while (parolaID < 0)
-                    parolaID = dialog.getSelectedItem();
+                ChooseDialog dialog = gameActivity.choose(words);
+                do { }
+                while (dialog.getSelectedItem() < 0);
+                parolaID = dialog.getSelectedItem();
                 gameActivity.runOnUiThread(() -> {
                     gameActivity.setWord(words[parolaID][0]);
                     gameActivity.setDefinition(words[parolaID][1]);
