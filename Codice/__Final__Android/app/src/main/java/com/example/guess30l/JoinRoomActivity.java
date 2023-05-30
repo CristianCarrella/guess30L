@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -103,6 +102,7 @@ public class JoinRoomActivity extends AppCompatActivity {
 
     private void JoinRoom() throws CreateRoomErrorException {
         if(lastClicked != -1 && MainActivity.serverRequester.joinRoom(stanzeArr[lastClicked].getId())){
+            LobbyActivity.maxPlayer = stanzeArr[lastClicked].getNumeroMaxGiocatori();
             goToLobbyActivity();
         }else{
             updateRooms();

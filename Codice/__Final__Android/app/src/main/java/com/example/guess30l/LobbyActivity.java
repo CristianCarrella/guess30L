@@ -19,6 +19,7 @@ import java.util.concurrent.Executors;
 public class LobbyActivity extends AppCompatActivity {
     TextView partecipanti;
     TextView nPartecipanti;
+    public static int maxPlayer;
     Button exit;
     Button start;
 

@@ -26,7 +26,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class ServerRequester {
-    private final int PORT = 5000;
+    private final int PORT = 5001;
     private ExecutorService executors =  Executors.newFixedThreadPool(100);
     private ScheduledExecutorService scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
     static ScheduledFuture<?> t;
@@ -37,7 +37,7 @@ public class ServerRequester {
         /* Le operazioni di rete non si possono fare sul thread UI */
         executors.execute(() -> {
             try{
-                socket = new Socket("10.0.2.2", PORT);
+                socket = new Socket("34.79.3.79", PORT);
 //                socket.setSoTimeout(100000000);
             }catch(IOException e){
                 e.printStackTrace();
@@ -137,7 +137,7 @@ public class ServerRequester {
                     }
                     lobbyActivity.runOnUiThread(()->{
                         lobbyActivity.setPartecipanti(usernames);
-                        lobbyActivity.nPartecipanti.setText(jsonArray.length()+"/");
+                        lobbyActivity.nPartecipanti.setText(jsonArray.length()+"/"+lobbyActivity.maxPlayer);
                     });
                 }
 
