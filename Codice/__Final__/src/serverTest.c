@@ -46,6 +46,7 @@ void *handle2_client(void *par_) {
         visualizza_stanze();
 
         if ((read(socket, buffer, 2048)) < 1) {
+            rm_user_from_room(utenteLoggato,stanzaAttuale);
             printf("Client disconnected.\n");
             break;
         }
