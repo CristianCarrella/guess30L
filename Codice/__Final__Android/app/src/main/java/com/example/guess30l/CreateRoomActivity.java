@@ -61,7 +61,7 @@ public class CreateRoomActivity extends AppCompatActivity {
         String numeroRound = normalizeNumber(numeroRoundField);
         String numeroMaxGiocatori = normalizeNumber(numeroMaxGiocatoriField);
 
-        if(!nomeStamza.equals("") && !numeroRound.equals("") && !numeroMaxGiocatori.equals("")){
+        if(!nomeStamza.equals("") && !numeroRound.equals("") && Integer.parseInt(numeroRound) > 0 && !numeroMaxGiocatori.equals("")){
             return MainActivity.serverRequester.CreateRoomRequest(nomeStamza, numeroRound, numeroMaxGiocatori);
         } else {
             throw new RoomErrorException();

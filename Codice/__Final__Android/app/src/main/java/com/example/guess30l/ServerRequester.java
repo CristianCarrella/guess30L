@@ -532,11 +532,13 @@ public class ServerRequester {
         String nomeStanza;
         String numeroMaxGiocatori;
         Socket socket;
+        String nRound;
 
         public CreateRoomCallable(String nomeStanza,String numeroRound, String numeroMaxGiocatori, Socket socket) {
             this.nomeStanza = nomeStanza;
             this.numeroMaxGiocatori = numeroMaxGiocatori;
             this.socket = socket;
+            this.nRound = numeroRound;
         }
 
         @Override
@@ -547,6 +549,7 @@ public class ServerRequester {
                 obj.put("operation", "createRoom");
                 obj.put("nomeStanza", nomeStanza);
                 obj.put("numeroMaxGiocatori", numeroMaxGiocatori);
+                obj.put("numeroRound", nRound);
 
                 PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
                 printWriter.print(obj);

@@ -98,7 +98,15 @@ public class GameActivity extends AppCompatActivity {
             js_obj.put("guessed", turn.isGuessed());
             js_obj.put("playerName", LoginActivity.loggedUser.getUsername());
             js_obj.put("word", attempt);
-            game.addToLog("Hai provato con "+attempt);
+            if(!attempt.equals("")) {
+                game.addToLog("Hai provato con "+attempt);
+            }
+            else if (turn.isGuessed()){
+                game.addToLog("HAI INDOVINATO! :D");
+            }
+            else {
+                game.addToLog("Hai passato il turno");
+            }
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
