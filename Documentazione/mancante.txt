@@ -4,9 +4,9 @@ Tutti i progetti dovranno essere accompagnati da un breve report (massino 10 pag
 [V] 2. gli utenti devono potersi registrare e loggare al server
 [V] 3. registrazione può essere sviluppata tramite database mysql o file
 [V] 4. gli utenti possono create tavoli di gioco e possono giocare solo con gli utenti presenti nella stanza
-[-] 5. un utente alla volta sceglie una parola tra quelle suggerite dal server da far indovinare agli altri componenti del tavolo di gioco
-[-] 6. a turno gli utenti possono provare ad indovinare la parola
-[-] 7. ad ogni giro di gioco, se la parola non è stata indovinata, il server aggiunge una lettera
+[V] 5. un utente alla volta sceglie una parola tra quelle suggerite dal server da far indovinare agli altri componenti del tavolo di gioco
+[V] 6. a turno gli utenti possono provare ad indovinare la parola
+[V] 7. ad ogni giro di gioco, se la parola non è stata indovinata, il server aggiunge una lettera
 [V] 8. [Opzionale] Per una complessità maggiore, e quindi punti extra, si può:
 [V] Usare un database Mysql or PostgreSQL
-[V]App in Android, prevedendo anche personalizzazione dei profili con avatar, etc..
+[V] App in Android, prevedendo anche personalizzazione dei profili con avatar, etc..
